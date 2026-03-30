@@ -102,7 +102,6 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 .wm-bar { height: 8px; background: var(--surface-h); border-radius: 4px; overflow: hidden; }
 .wm-fill { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
-/* Menu Cards Horizontais Harmônicos */
 .menu-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .menu-card { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; padding: 14px 16px; min-height: 80px; border-radius: 20px; position: relative; overflow: hidden; cursor: pointer; transition: transform .3s; background: var(--glass); border: 1px solid var(--glass-b); box-shadow: 0 4px 20px var(--shadow); text-align: left; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 .menu-card:active { transform: scale(.95); }
@@ -125,7 +124,7 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 .fab-back { position: fixed; bottom: 30px; left: 24px; width: 56px; height: 56px; border-radius: 50%; background: var(--glass); border: 1px solid var(--glass-b); color: var(--text); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px var(--shadow); cursor: pointer; z-index: 100; transition: transform .2s; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); font-size: 22px; padding-right: 2px; }
 .fab-back:active { transform: scale(0.9); }
 
-/* BARRA LATERAL (SIDEBAR) */
+/* BARRA LATERAL */
 .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9998; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
 .sidebar-overlay.open { opacity: 1; pointer-events: auto; }
 .sidebar { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: var(--bg2); border-right: 1px solid var(--glass-b); z-index: 9999; transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; box-shadow: 10px 0 30px rgba(0,0,0,0.2); }
@@ -162,9 +161,7 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 .nb-err { background: rgba(255,107,107,.15); color: var(--red); border: 1px solid rgba(255,107,107,.3); }
 .nb-ok { background: rgba(74,222,128,.15); color: var(--green); border: 1px solid rgba(74,222,128,.3); }
 
-/* =========================================
-   GLUCOSE DASHBOARD
-========================================= */
+/* DASHBOARD */
 #screen-glucose { padding: 0; }
 .gcontent { overflow-y: auto; flex: 1; display: flex; flex-direction: column; position: relative; }
 .dashboard { display: grid; grid-template-columns: 320px 1fr 1fr; grid-template-rows: minmax(110px, auto) 1fr minmax(70px, auto) minmax(90px, auto); grid-template-areas: "disp table table" "numpad table table" "numpad tags tags" "time hba1c check"; gap: 12px; padding: 16px 20px 24px; flex: 1; min-height: 550px; }
@@ -228,7 +225,7 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 .btn-primary { width: 100%; padding: 16px; border-radius: var(--radius-sm); font-size: 15px; font-weight: 700; cursor: pointer; transition: all .3s; border: none; font-family: inherit; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .btn-primary:active { transform: scale(.97); }
 
-/* TIME IN RANGE WIDGET */
+/* WIDGETS */
 .tir-card { padding: 20px; background: var(--glass); border: 1px solid var(--glass-b); border-radius: var(--radius); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 .tir-toggle { display: flex; background: var(--surface-h); border-radius: 12px; padding: 3px; margin-bottom: 16px; }
 .tir-btn { flex: 1; padding: 8px; font-size: 11px; font-weight: 700; text-align: center; cursor: pointer; border-radius: 10px; color: var(--text-m); transition: 0.2s; border: none; background: transparent; font-family: inherit;}
@@ -246,9 +243,6 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 .tir-dot.normal { background: var(--green); }
 .tir-dot.high { background: var(--red); }
 
-/* =========================================
-   CALENDÁRIOS E LISTAS (SHARED)
-========================================= */
 .cal-content { padding: 16px 20px 110px; flex: 1; overflow-y: hidden; display: flex; flex-direction: column; }
 .cal-layout { display: grid; grid-template-columns: 340px 1fr; gap: 24px; align-items: start; height: 100%; }
 @media (max-width: 900px) { .cal-layout { grid-template-columns: 1fr; overflow-y: auto; display: block; } .cal-right { margin-top: 24px; } }
@@ -285,7 +279,6 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 .hdot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 .vchip { display: inline-block; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 12px; }
 
-/* WORKOUT & CHECKLIST SHARED LISTS */
 .w-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
 .w-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--glass); border: 1px solid var(--glass-b); border-radius: var(--radius-sm); transition: all 0.2s; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 .w-item.done { opacity: 0.6; background: var(--surface-h); }
@@ -305,7 +298,6 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 .btn-add-w { width: 100%; padding: 18px; border-radius: var(--radius-sm); border: 2px dashed var(--glass-b); background: transparent; color: var(--text-m); font-weight: 800; cursor: pointer; transition: 0.2s; font-family: inherit; font-size: 13px; letter-spacing: 0.05em; text-transform: uppercase; }
 .btn-add-w:active { background: var(--surface-h); transform: scale(0.98); border-color: var(--text-d); color: var(--text); }
 
-/* Tema cores calendários */
 #w-cal-grid .cal-day.sel { background: var(--rose); box-shadow: 0 4px 12px rgba(255,107,157,.3); }
 #w-cal-grid .cal-day.has-data::after { background: var(--rose); }
 #w-cal-grid .cal-day.sel.has-data::after { background: #fff; }
@@ -314,19 +306,14 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 #cl-cal-grid .cal-day.has-data::after { background: var(--teal); }
 #cl-cal-grid .cal-day.sel.has-data::after { background: #fff; }
 
-/* =========================================
-   DIETA / CALORIAS (NO TREINO)
-========================================= */
 .cal-diet-card { background: var(--glass); border: 1px solid var(--glass-b); border-radius: var(--radius-sm); padding: 16px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); margin-bottom: 24px; }
 .diet-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
 .diet-stats { font-size: 12px; font-weight: 700; color: var(--text-m); }
 .diet-stats span { color: var(--text); font-size: 20px; font-weight: 800; }
 .diet-goal-edit { cursor: pointer; text-decoration: underline; text-decoration-style: dashed; text-decoration-color: var(--glass-b); }
 .diet-pct { font-size: 16px; font-weight: 800; color: var(--amber); }
-
 .diet-bar { height: 10px; background: var(--surface-h); border-radius: 5px; overflow: hidden; margin-bottom: 16px; }
 .diet-fill { height: 100%; background: linear-gradient(90deg, var(--amber), var(--rose)); border-radius: 5px; transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); }
-
 .diet-inputs { display: flex; gap: 8px; margin-bottom: 16px; }
 .diet-inputs input { background: var(--input-bg); border: 1px solid var(--glass-b); border-radius: 10px; color: var(--text); font-size: 13px; font-weight: 600; font-family: inherit; padding: 10px 12px; outline: none; transition: 0.2s; }
 .diet-inputs input:focus { border-color: var(--amber); }
@@ -335,13 +322,9 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 .d-in-time { width: 85px; text-align: center; }
 .btn-diet-add { background: var(--amber); color: #fff; border: none; border-radius: 10px; width: 42px; font-size: 20px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
 .btn-diet-add:active { transform: scale(0.9); }
-
 .diet-list { display: flex; flex-direction: column; gap: 8px; }
 .diet-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: var(--surface-h); border-radius: 10px; }
 
-/* =========================================
-   SLEEP & SETTINGS
-========================================= */
 #screen-sleep { padding: 0; }
 .tcard { padding: 18px 20px; background: var(--glass); border: 1px solid var(--glass-b); border-radius: var(--radius); margin-bottom: 13px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 .tcard-label { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--text-m); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
@@ -367,23 +350,23 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 .stx { flex: 1; }
 .sl { font-size: 14px; font-weight: 800; color: var(--text); }
 .ss { font-size: 11px; font-weight: 600; color: var(--text-m); margin-top: 4px; }
-
 .alarm-card { padding: 20px; background: var(--glass); border: 1px solid var(--glass-b); border-radius: var(--radius); margin-bottom: 16px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 .atinput { width: 100%; padding: 14px; background: var(--input-bg); border: 1.5px solid var(--glass-b); border-radius: var(--radius-xs); color: var(--text); font-size: 28px; font-weight: 800; font-family: inherit; letter-spacing: -.02em; outline: none; text-align: center; transition: border-color .2s; margin-bottom: 14px; }
 .atype-row { display: flex; gap: 8px; }
 .atype-btn { flex: 1; padding: 12px 8px; border-radius: var(--radius-xs); border: 1.5px solid var(--glass-b); background: var(--surface-h); color: var(--text-m); font-size: 12px; font-weight: 800; cursor: pointer; transition: all .2s; font-family: inherit; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .atype-btn.active { background: rgba(63,219,200,.15); border-color: rgba(63,219,200,.4); color: var(--teal); }
 .btn-ia { background: linear-gradient(135deg, #0e8c62 0%, #3fdbc8 100%); color: #fff; box-shadow: 0 8px 24px rgba(63,219,200,.25); }
-
-/* TOAST E MODAL */
 .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(18px); padding: 16px 28px; border-radius: 16px; font-size: 15px; font-weight: 800; font-family: inherit; opacity: 0; transition: all .38s cubic-bezier(.34,1.56,.64,1); pointer-events: none; white-space: nowrap; z-index: 9999; background: var(--glass); border: 1px solid var(--glass-b); color: var(--text); box-shadow: 0 14px 40px var(--shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .empty-state { text-align: center; padding: 20px; color: var(--text-d); font-size: 12px; font-weight: 600; }
-
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 10000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .modal-box { background: var(--bg); border: 1px solid var(--glass-b); padding: 24px; border-radius: 28px; width: 90%; max-width: 340px; box-shadow: 0 24px 60px rgba(0,0,0,0.6); }
 .modal-disp { font-size: 42px; font-weight: 800; text-align: center; margin-bottom: 20px; color: var(--text); min-height: 52px; letter-spacing: -1px; }
 
+/* SETTINGS CONTENT SCROLL */
+.sett-content { padding: 16px 18px 100px; overflow-y: auto; flex: 1; }
+.scontent { padding: 16px 18px 100px; overflow-y: auto; flex: 1; }
+.sinfo { display: flex; gap: 10px; padding: 14px 16px; background: rgba(180,127,255,.08); border: 1px solid rgba(180,127,255,.2); border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 13px; font-weight: 600; color: var(--text-m); line-height: 1.5; }
 </style>
 </head>
 <body data-theme="dark">
@@ -810,7 +793,7 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
       </div>
       <input type="file" id="import-file" style="display:none;" accept=".txt" onchange="importBackup(event)">
     </div>
-    <div style="text-align:center;padding:28px 0;color:var(--text-d);font-size:11px;">andredistortion's life v14.0 · 🔥 Firebase Sync Total</div>
+    <div style="text-align:center;padding:28px 0;color:var(--text-d);font-size:11px;">andredistortion's life v15.0 · 🔥 Firebase Full Sync</div>
   </div>
 </div>
 
@@ -916,8 +899,18 @@ firebase.initializeApp(firebaseConfig);
 const dbRef = firebase.database().ref('distortion_data/andre');
 
 let syncDebounceTimer = null;
-let lastLocalUpdate = 0; // Previne conflitos enquanto você digita
+let lastLocalUpdate = 0; 
 const SYNC_DELAY = 1000;
+
+// ─────────────────────────────────────────────────────────────
+// FUNÇÕES DE SEGURANÇA PARA O FIREBASE (O SEGREDO)
+// ─────────────────────────────────────────────────────────────
+// O Firebase NÃO permite barras (/) nos nomes das chaves.
+function safeKey(k) { return String(k).replace(/[\.\#\$\/\[\]]/g, '-'); }
+function getSafeDate(d) {
+  if(!d) d = new Date();
+  return d.toLocaleDateString('pt-BR').replace(/\//g, '-');
+}
 
 // ─────────────────────────────────────────────────────────────
 // VARIAVEIS GLOBAIS (ESTADO EM MEMÓRIA)
@@ -930,32 +923,44 @@ let curTheme=localStorage.getItem('v_theme')||'dark';
 let currentTIRMode = 'daily';
 
 let calDate = new Date();
-let selectedCalDate = new Date().toLocaleDateString('pt-BR');
+let selectedCalDate = getSafeDate();
 
 // Variáveis Academia Customizada
 let wCalDate = new Date();
-let wSelectedDateStr = new Date().toLocaleDateString('pt-BR');
-let wProfiles = JSON.parse(localStorage.getItem('v_workout_profiles') || '{}');
+let wSelectedDateStr = getSafeDate();
+let wProfiles = {};
+let rawProf = JSON.parse(localStorage.getItem('v_workout_profiles') || '{}');
+for(let k in rawProf) wProfiles[safeKey(k)] = rawProf[k];
 
-let wLogRaw = JSON.parse(localStorage.getItem('v_workout_log') || '{}');
 let wLog = {};
+let wLogRaw = JSON.parse(localStorage.getItem('v_workout_log') || '{}');
 for(let k in wLogRaw) {
+    let sk = safeKey(k);
     if(Array.isArray(wLogRaw[k])) {
-        wLog[k] = { exercises: wLogRaw[k], creatine: '' };
+        wLog[sk] = { exercises: wLogRaw[k], creatine: '' };
     } else {
-        wLog[k] = wLogRaw[k];
+        wLog[sk] = wLogRaw[k];
     }
 }
 
 // Variáveis Checklist Diário
 let clCalDate = new Date();
-let clSelectedDateStr = new Date().toLocaleDateString('pt-BR');
-let clCustom = JSON.parse(localStorage.getItem('v_cl_custom') || '["Beber 2L de Água"]');
-let clLog = JSON.parse(localStorage.getItem('v_cl_log') || '{}');
+let clSelectedDateStr = getSafeDate();
+let clCustom = JSON.parse(localStorage.getItem('v_cl_custom') || '["Beber 2L de Água"]').map(safeKey);
+
+let clLog = {};
+let rawCl = JSON.parse(localStorage.getItem('v_cl_log') || '{}');
+for(let k in rawCl) {
+    let sk = safeKey(k);
+    clLog[sk] = {};
+    for(let sub in rawCl[k]) clLog[sk][safeKey(sub)] = rawCl[k][sub];
+}
 
 // Variáveis Dieta
 let defaultDietGoal = parseInt(localStorage.getItem('v_diet_goal') || '4000');
-let dLog = JSON.parse(localStorage.getItem('v_diet_log') || '{}');
+let dLog = {};
+let rawD = JSON.parse(localStorage.getItem('v_diet_log') || '{}');
+for(let k in rawD) dLog[safeKey(k)] = rawD[k];
 
 // Numpad Modal
 let modalInput = '';
@@ -976,7 +981,7 @@ function showSync(state, text) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// FIREBASE SYNC LOGIC (A MÁGICA DA NUVEM)
+// FIREBASE SYNC LOGIC
 // ─────────────────────────────────────────────────────────────
 function buildState() {
   return {
@@ -1000,18 +1005,37 @@ function applyState(data) {
   if(data.v_insulin)         iLog             = data.v_insulin;
   if(data.v_ialarm)          iAlarm           = data.v_ialarm;
   if(data.v_theme)           curTheme         = data.v_theme;
+  
   if(data.v_workout_log) {
     let raw = data.v_workout_log;
     wLog = {};
     for(let k in raw) {
-      wLog[k] = Array.isArray(raw[k]) ? { exercises: raw[k], creatine: '' } : raw[k];
+      wLog[safeKey(k)] = Array.isArray(raw[k]) ? { exercises: raw[k], creatine: '' } : raw[k];
     }
   }
-  if(data.v_workout_profiles) wProfiles      = data.v_workout_profiles;
-  if(data.v_cl_custom)        clCustom        = data.v_cl_custom;
-  if(data.v_cl_log)           clLog           = data.v_cl_log;
-  if(data.v_diet_log)         dLog            = data.v_diet_log;
-  if(data.v_diet_goal)        defaultDietGoal = parseInt(data.v_diet_goal);
+  if(data.v_workout_profiles) {
+    let raw = data.v_workout_profiles;
+    wProfiles = {};
+    for(let k in raw) wProfiles[safeKey(k)] = raw[k];
+  }
+  
+  if(data.v_cl_custom) clCustom = data.v_cl_custom.map(safeKey);
+  
+  if(data.v_cl_log) {
+    let raw = data.v_cl_log;
+    clLog = {};
+    for(let k in raw) {
+       let sk = safeKey(k);
+       clLog[sk] = {};
+       for(let j in raw[k]) clLog[sk][safeKey(j)] = raw[k][j];
+    }
+  }
+  if(data.v_diet_log) {
+    let raw = data.v_diet_log;
+    dLog = {};
+    for(let k in raw) dLog[safeKey(k)] = raw[k];
+  }
+  if(data.v_diet_goal) defaultDietGoal = parseInt(data.v_diet_goal);
 }
 
 function saveLocalState() {
@@ -1027,7 +1051,6 @@ function saveLocalState() {
   localStorage.setItem('v_diet_goal', defaultDietGoal);
 }
 
-// ESTA É A FUNÇÃO QUE CHAMA A SINCRONIZAÇÃO SEMPRE QUE ALGO MUDA
 function persistAll() {
   saveLocalState();
   scheduleSync();
@@ -1039,7 +1062,7 @@ function scheduleSync() {
     showSync('syncing', 'Salvando na nuvem…');
     try {
       const state = buildState();
-      lastLocalUpdate = state._updated; // Marca o tempo do envio local
+      lastLocalUpdate = state._updated; 
       await dbRef.set(state);
       showSync('ok', 'Salvo na nuvem ✓');
     } catch(e) {
@@ -1085,12 +1108,11 @@ async function forceLoadFromCloud() {
   }
 }
 
-// 🔥 LISTENER EM TEMPO REAL: Recebe dados alterados por outro aparelho automaticamente
 dbRef.on('value', (snapshot) => {
   const data = snapshot.val();
   if(data && data._updated && data._updated > lastLocalUpdate + 1500) {
     applyState(data);
-    saveLocalState(); // Atualiza a memória local para não perder
+    saveLocalState(); 
     refreshUI();
     showSync('ok', 'Atualizado em tempo real ✓');
     lastLocalUpdate = data._updated;
@@ -1119,7 +1141,6 @@ async function init(){
   setAType(iAlarm.type,null,true);
   window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{if(curTheme==='system')applyTheme('system',true);});
   
-  // Carregamento Inicial do Firebase
   const loadingText = document.getElementById('loading-text');
   try {
     loadingText.textContent = 'Conectando ao Firebase…';
@@ -1131,7 +1152,6 @@ async function init(){
       applyTheme(curTheme, true);
       loadingText.textContent = 'Dados carregados ✓';
     } else {
-      // Primeira vez no Firebase, envia os dados que você já tinha no cache
       loadingText.textContent = 'Enviando dados antigos para a nuvem…';
       await forceSyncToCloud();
       loadingText.textContent = 'Pronto ✓';
@@ -1160,9 +1180,9 @@ function updateAllData(){
 }
 
 function updateHomeWidgets() {
-  const todayStr = new Date().toLocaleDateString('pt-BR');
+  const todayStr = getSafeDate();
   
-  const gDay = gReadings.filter(r => r.date === todayStr);
+  const gDay = gReadings.filter(r => r.date === todayStr || r.date === new Date().toLocaleDateString('pt-BR'));
   let gTir = 0;
   if(gDay.length > 0) {
       let inRange = gDay.filter(r => r.value >= 70 && r.value <= 139).length;
@@ -1202,9 +1222,6 @@ function updateHomeWidgets() {
   }
 }
 
-// ─────────────────────────────────────────────────────────────
-// BARRA LATERAL (SIDEBAR)
-// ─────────────────────────────────────────────────────────────
 function openSidebar() {
   document.getElementById('sidebar').classList.add('open');
   document.getElementById('sidebar-overlay').classList.add('open');
@@ -1223,8 +1240,8 @@ function updateSidebarStats() {
   const v = calcHba1c();
   document.getElementById('sb-hba1c').textContent = v ? `${v.toFixed(1)}%` : '—';
   
-  const todayStr = new Date().toLocaleDateString('pt-BR');
-  const todayReadings = gReadings.filter(r => r.date === todayStr);
+  const todayStr = getSafeDate();
+  const todayReadings = gReadings.filter(r => r.date === todayStr || r.date === new Date().toLocaleDateString('pt-BR'));
   if(todayReadings.length > 0) {
     const inRange = todayReadings.filter(r => r.value >= 70 && r.value <= 139).length;
     document.getElementById('sb-tir').textContent = `${Math.round((inRange/todayReadings.length)*100)}%`;
@@ -1241,17 +1258,14 @@ function updateSidebarStats() {
   }
 }
 
-// ─────────────────────────────────────────────────────────────
-// NOTIFICAÇÕES E RELÓGIO
-// ─────────────────────────────────────────────────────────────
 function updateNotifications() {
   const container = document.getElementById('g-notifications');
   if(!container) return;
   let html = '';
-  const todayStr = new Date().toLocaleDateString('pt-BR');
+  const todayStr = getSafeDate();
   const insulinDone = iLog.some(e => e.key === dayKey());
   if(!insulinDone) { html += `<span class="notif-badge nb-err">⚠️ Basal Pendente</span>`; }
-  const todayReadings = gReadings.filter(r => r.date === todayStr);
+  const todayReadings = gReadings.filter(r => r.date === todayStr || r.date === new Date().toLocaleDateString('pt-BR'));
   if(todayReadings.length <= 3) { html += `<span class="notif-badge nb-warn">📝 ${todayReadings.length}/4 Medições</span>`; }
   if(todayReadings.length > 0) {
     const avg = todayReadings.reduce((a,b) => a + b.value, 0) / todayReadings.length;
@@ -1294,22 +1308,21 @@ function goTo(s){
     const n=new Date(); document.getElementById('gtime').value=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
   }
   if(s==='calendar'){
-    calDate = new Date(); selectedCalDate = new Date().toLocaleDateString('pt-BR');
+    calDate = new Date(); selectedCalDate = getSafeDate();
     renderCalendar(); renderCalData();
   }
   if(s==='workout'){
-    wCalDate = new Date(); wSelectedDateStr = new Date().toLocaleDateString('pt-BR');
+    wCalDate = new Date(); wSelectedDateStr = getSafeDate();
     renderWCalendar(); renderWData();
   }
   if(s==='checklist'){
-    clCalDate = new Date(); clSelectedDateStr = new Date().toLocaleDateString('pt-BR');
+    clCalDate = new Date(); clSelectedDateStr = getSafeDate();
     renderCLCalendar(); renderCLData();
   }
   if(s==='home'){ updateHomeWidgets(); }
 }
 function goBack(){ goTo('home'); }
 
-/* THEME */
 function applyTheme(theme,silent){
   curTheme=theme;
   let actual=theme;
@@ -1334,9 +1347,6 @@ function showToast(id,text){
   setTimeout(()=>el.classList.remove('show'),2600);
 }
 
-// ─────────────────────────────────────────────────────────────
-// BACKUP EXPORT / IMPORT
-// ─────────────────────────────────────────────────────────────
 function exportBackup() {
   const backupData = buildState();
   const jsonStr = JSON.stringify(backupData);
@@ -1394,7 +1404,7 @@ function renderCLCalendar() {
   ['D','S','T','Q','Q','S','S'].forEach(d => { grid.innerHTML += `<div class="cal-dw">${d}</div>`; });
   for(let i=0; i<firstDay; i++) { grid.innerHTML += `<div class="cal-day empty"></div>`; }
   for(let i=1; i<=daysInMonth; i++) {
-    const dObj = new Date(year, month, i); const dStr = dObj.toLocaleDateString('pt-BR');
+    const dObj = new Date(year, month, i); const dStr = getSafeDate(dObj);
     let hasData = false;
     if(clLog[dStr]) { hasData = Object.values(clLog[dStr]).some(v => v === true); }
     const sel = dStr === clSelectedDateStr ? 'sel' : ''; const hd = hasData ? 'has-data' : '';
@@ -1406,8 +1416,7 @@ function selectCLDay(dStr) { clSelectedDateStr = dStr; renderCLCalendar(); rende
 function updateCLMetrics() {
   const dateStr = clSelectedDateStr;
   
-  // Glicose
-  const gDay = gReadings.filter(r => r.date === dateStr);
+  const gDay = gReadings.filter(r => r.date === dateStr || r.date === dateStr.replace(/-/g,'/'));
   let gTir = 0;
   if(gDay.length > 0) {
       let inRange = gDay.filter(r => r.value >= 70 && r.value <= 139).length;
@@ -1416,7 +1425,6 @@ function updateCLMetrics() {
   document.getElementById('cl-val-g').textContent = `${gTir}%`;
   document.getElementById('cl-fill-g').style.width = `${gTir}%`;
 
-  // Treino
   const wDay = wLog[dateStr];
   let wPct = 0;
   if(wDay && wDay.exercises && wDay.exercises.length > 0) {
@@ -1426,14 +1434,12 @@ function updateCLMetrics() {
   document.getElementById('cl-val-w').textContent = `${wPct}%`;
   document.getElementById('cl-fill-w').style.width = `${wPct}%`;
 
-  // Calorias
   const dDay = dLog[dateStr] || { goal: defaultDietGoal, items: [] };
   let totalKcal = dDay.items.reduce((sum, item) => sum + parseInt(item.kcal), 0);
   let dPct = Math.min(100, Math.round((totalKcal / dDay.goal) * 100));
   document.getElementById('cl-val-d').textContent = `${dPct}%`;
   document.getElementById('cl-fill-d').style.width = `${dPct}%`;
 
-  // Tarefas Manuais
   let clTotal = clCustom.length;
   let clDoneCount = 0;
   if(clLog[dateStr]) {
@@ -1449,7 +1455,7 @@ function renderCLData() {
   const list = document.getElementById('cl-list-area');
   let html = '';
 
-  const gDay = gReadings.filter(r => r.date === clSelectedDateStr);
+  const gDay = gReadings.filter(r => r.date === clSelectedDateStr || r.date === clSelectedDateStr.replace(/-/g,'/'));
   let gText = 'Glicose: Sem dados (0%)';
   let gDone = false;
   if(gDay.length > 0) {
@@ -1515,7 +1521,11 @@ function toggleCLItem(item) {
 }
 function addCLItem() {
   const item = prompt("Qual o novo item para o checklist diário permanente?");
-  if(item && item.trim() !== '') { clCustom.push(item.trim()); persistAll(); renderCLData(); }
+  if(item && item.trim() !== '') { 
+    clCustom.push(safeKey(item.trim())); 
+    persistAll(); 
+    renderCLData(); 
+  }
 }
 function removeCLItem(idx) {
   if(!confirm('Remover este item de todos os dias futuros?')) return;
@@ -1598,7 +1608,7 @@ function addMeal() {
   if(!meal || !kcal || !time) return showToast('t-save', 'Preencha todos os campos!');
 
   if(!dLog[wSelectedDateStr]) dLog[wSelectedDateStr] = { goal: defaultDietGoal, items: [] };
-  dLog[wSelectedDateStr].items.unshift({ meal, kcal, time });
+  dLog[wSelectedDateStr].items.unshift({ meal: safeKey(meal), kcal, time });
   persistAll();
 
   document.getElementById('diet-meal').value = '';
@@ -1624,7 +1634,7 @@ function editGoal() {
 }
 
 // ─────────────────────────────────────────────────────────────
-// ACADEMIA E TREINO (WORKOUT) - CUSTOMIZÁVEL
+// ACADEMIA E TREINO (WORKOUT)
 // ─────────────────────────────────────────────────────────────
 function changeWMonth(d) { wCalDate.setMonth(wCalDate.getMonth() + d); renderWCalendar(); }
 
@@ -1640,7 +1650,7 @@ function renderWCalendar() {
   
   for(let i=1; i<=daysInMonth; i++) {
     const dObj = new Date(year, month, i);
-    const dStr = dObj.toLocaleDateString('pt-BR');
+    const dStr = getSafeDate(dObj);
     
     let hasData = false;
     if(wLog[dStr] && wLog[dStr].exercises && wLog[dStr].exercises.length > 0) {
@@ -1664,7 +1674,6 @@ function renderWData() {
   const list = document.getElementById('w-list-area');
   let html = '';
 
-  // Suplementação (Creatina via Numpad)
   const wDay = wLog[wSelectedDateStr] || { exercises: [], creatine: '' };
   const creaVal = wDay.creatine;
   const creaDone = creaVal && parseFloat(creaVal) > 0;
@@ -1680,7 +1689,6 @@ function renderWData() {
     </div>
   `;
 
-  // Perfis Salvos
   html += `<div class="slabel">Perfis de Treino Salvos</div>`;
   html += `<div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:8px; margin-bottom:16px; scrollbar-width:none;">`;
   const profileNames = Object.keys(wProfiles);
@@ -1693,7 +1701,6 @@ function renderWData() {
   }
   html += `</div>`;
 
-  // Treino Atual
   html += `<div class="slabel">Exercícios do Dia</div>`;
   const exercises = wDay.exercises;
 
@@ -1734,7 +1741,7 @@ function saveAsProfile() {
   if(!wDay || !wDay.exercises || wDay.exercises.length === 0) return;
   
   const cleanEx = wDay.exercises.map(ex => ({name: ex.name, reps: ex.reps, done: false}));
-  wProfiles[name] = cleanEx;
+  wProfiles[safeKey(name)] = cleanEx;
   persistAll();
   showToast('t-save', 'Perfil Salvo!');
   renderWData();
@@ -1808,7 +1815,7 @@ function saveGlucose(){
   const tv=document.getElementById('gtime').value; const now=new Date();
   const[th,tm]=tv?tv.split(':').map(Number):[now.getHours(),now.getMinutes()];
   
-  gReadings.unshift({ value:parseFloat(ginput), meal:mealLabel, time:`${String(th).padStart(2,'0')}:${String(tm).padStart(2,'0')}`, date:now.toLocaleDateString('pt-BR'), ts:now.getTime() });
+  gReadings.unshift({ value:parseFloat(ginput), meal:mealLabel, time:`${String(th).padStart(2,'0')}:${String(tm).padStart(2,'0')}`, date: getSafeDate(now), ts:now.getTime() });
   if(gReadings.length>500) gReadings.pop(); 
   
   persistAll();
@@ -1856,10 +1863,10 @@ function setTIRMode(mode) {
 }
 
 function updateTIR(){
-  const todayStr = new Date().toLocaleDateString('pt-BR');
+  const todayStr = getSafeDate();
   const ninetyDaysAgo = new Date().getTime() - (90 * 24 * 60 * 60 * 1000);
   
-  let targetData = currentTIRMode === 'daily' ? gReadings.filter(r => r.date === todayStr) : gReadings.filter(r => r.ts >= ninetyDaysAgo);
+  let targetData = currentTIRMode === 'daily' ? gReadings.filter(r => r.date === todayStr || r.date === new Date().toLocaleDateString('pt-BR')) : gReadings.filter(r => r.ts >= ninetyDaysAgo);
   const count = targetData.length;
   
   document.getElementById('tir-total-readings').textContent = `${count} mediç${count === 1 ? 'ão' : 'ões'}`;
@@ -1887,8 +1894,8 @@ function renderCalendar() {
   ['D','S','T','Q','Q','S','S'].forEach(d => { grid.innerHTML += `<div class="cal-dw">${d}</div>`; });
   for(let i=0; i<firstDay; i++) { grid.innerHTML += `<div class="cal-day empty"></div>`; }
   for(let i=1; i<=daysInMonth; i++) {
-    const dObj = new Date(year, month, i); const dStr = dObj.toLocaleDateString('pt-BR');
-    const hasData = gReadings.some(r => r.date === dStr);
+    const dObj = new Date(year, month, i); const dStr = getSafeDate(dObj);
+    const hasData = gReadings.some(r => r.date === dStr || r.date === dObj.toLocaleDateString('pt-BR'));
     const sel = dStr === selectedCalDate ? 'sel' : ''; const hd = hasData ? 'has-data' : '';
     grid.innerHTML += `<div class="cal-day ${sel} ${hd}" onclick="selectCalDay('${dStr}')">${i}</div>`;
   }
@@ -1897,7 +1904,7 @@ function selectCalDay(dStr) { selectedCalDate = dStr; renderCalendar(); renderCa
 function renderCalData() {
   document.getElementById('chart-date-label').textContent = selectedCalDate;
   const list = document.getElementById('cal-readings'); const chartArea = document.getElementById('cal-chart-area');
-  const dayReadings = gReadings.filter(r => r.date === selectedCalDate).slice().reverse(); 
+  const dayReadings = gReadings.filter(r => r.date === selectedCalDate || r.date === selectedCalDate.replace(/-/g,'/')).slice().reverse(); 
   if(dayReadings.length === 0) {
     list.innerHTML = '<div class="empty-state">Nenhuma medição nesta data</div>'; chartArea.innerHTML = '<div class="empty-state" style="margin:auto;">Selecione um dia com medições</div>'; return;
   }
@@ -1936,49 +1943,107 @@ function calcCycles(){
     const bc=c.q==='best'?'cb-best':c.q==='ok'?'cb-ok':'cb-min'; const bl=c.q==='best'?'★ Ideal':c.q==='ok'?'Bom':'Mínimo'; const rc=c.q==='best'?'rec':'';
     const dots=Array.from({length:c.c},()=>'<div class="cdot f"></div>').join('')+Array.from({length:Math.max(0,6-c.c)},()=>'<div class="cdot"></div>').join('');
     const card=document.createElement('div'); card.className=`ccard ${rc}`;
-    card.innerHTML=`<div class="cinfo"><div class="ctime">${c.lbl}</div><div class="cdur">${c.dur}</div><div class="cdots">${dots}</div></div><span class="cbadge ${bc}">${bl}</span>`;
-    card.onclick=()=>showToast('t-save',`⏰ Alarme para ${c.lbl}`); con.appendChild(card);
-  });
-  setTimeout(()=>con.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+    card.innerHTML=`<div class="cinfo"><div class="ctime">${c.lbl}</div><div class="function saveAsProfile() {
+  const name = prompt("Nome do perfil (ex: Dia de Costas):");
+  if(!name || name.trim() === "") return;
+  
+  const wDay = wLog[wSelectedDateStr];
+  if(!wDay || !wDay.exercises || wDay.exercises.length === 0) {
+    alert("Adicione exercícios antes de salvar um perfil.");
+    return;
+  }
+  
+  // Clona os exercícios mas reseta o status 'done' para o perfil
+  const cleanEx = wDay.exercises.map(ex => ({name: ex.name, reps: ex.reps, done: false}));
+  wProfiles[safeKey(name)] = cleanEx;
+  
+  persistAll(); // Salva e Sincroniza
+  showToast('t-save', 'Perfil Salvo na Nuvem!');
+  renderWData();
 }
 
-// ─────────────────────────────────────────────────────────────
-// INSULIN CHECK
-// ─────────────────────────────────────────────────────────────
-function dayKey(){const d=new Date(); return`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;}
-function checkInsulin(){
-  const btn = document.getElementById('db-check-card');
-  if(btn && btn.classList.contains('done')) return;
-  const now=new Date(); const ts=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  
-  iLog.unshift({date:now.toLocaleDateString('pt-BR'), time:ts, key:dayKey(), ts:now.getTime()});
-  if(iLog.length>90) iLog.pop(); 
-  
-  persistAll();
-  
-  updateAllData(); showToast('t-save','💊 Check Salvo!');
-}
-function updateIState(){
-  const done=iLog.some(e=>e.key===dayKey());
-  const card=document.getElementById('db-check-card'); const ic=document.getElementById('db-check-icon'); const lb=document.getElementById('db-check-label');
-  if(done){
-    if(card) card.className='db-card db-check done'; if(ic) ic.textContent='✅'; if(lb) lb.textContent='Feito';
+function loadOrDeleteProfile(p) {
+  if(confirm(`Deseja carregar o perfil "${p}" para hoje? (Substituirá a lista atual)`)){
+      const copy = JSON.parse(JSON.stringify(wProfiles[p]));
+      if(!wLog[wSelectedDateStr]) wLog[wSelectedDateStr] = { exercises: [], creatine: '' };
+      wLog[wSelectedDateStr].exercises = copy;
+      persistAll();
+      refreshUI();
   } else {
-    if(card) card.className='db-card db-check pending'; if(ic) ic.textContent='💊'; if(lb) lb.textContent='Check';
+      if(confirm(`Deseja DELETAR permanentemente o perfil "${p}"?`)){
+          delete wProfiles[p];
+          persistAll();
+          renderWData();
+      }
   }
 }
-function setAType(t,btn,silent){
-  insulinAlarmType=t;
-  ['normal','vibrate','off'].forEach(x=>{const b=document.getElementById(`at-${x}`); if(b) b.classList.toggle('active',x===t);});
-}
-function saveIAlarm(){
-  const time=document.getElementById('ialarm-time').value;
-  iAlarm={time, type:insulinAlarmType}; 
-  persistAll();
-  showToast('t-save',`⏰ Alarme salvo!`);
+
+function toggleWCheck(i) { 
+  if(!wLog[wSelectedDateStr]) return;
+  wLog[wSelectedDateStr].exercises[i].done = !wLog[wSelectedDateStr].exercises[i].done; 
+  persistAll(); 
 }
 
+function editWEx(i, field, val) { 
+  if(!wLog[wSelectedDateStr]) return;
+  wLog[wSelectedDateStr].exercises[i][field] = val; 
+  persistAll(); 
+}
+
+function addWEx() {
+  if(!wLog[wSelectedDateStr]) wLog[wSelectedDateStr] = { exercises: [], creatine: '' };
+  wLog[wSelectedDateStr].exercises.push({ name: "", reps: "3 x 10", done: false });
+  persistAll();
+  renderWData();
+}
+
+function delWEx(i) {
+  if(!confirm('Remover este exercício do dia?')) return;
+  wLog[wSelectedDateStr].exercises.splice(i, 1);
+  persistAll();
+  renderWData();
+}
+
+// ─────────────────────────────────────────────────────────────
+// CONTINUAÇÃO: DIETA E CALORIAS
+// ─────────────────────────────────────────────────────────────
+
+function addMeal() {
+  const meal = document.getElementById('diet-meal').value;
+  const kcal = document.getElementById('diet-kcal').value;
+  const time = document.getElementById('diet-time').value;
+  
+  if(!meal || !kcal || !time) {
+    showToast('t-save', 'Preencha todos os campos!');
+    return;
+  }
+
+  if(!dLog[wSelectedDateStr]) dLog[wSelectedDateStr] = { goal: defaultDietGoal, items: [] };
+  
+  dLog[wSelectedDateStr].items.unshift({ meal: safeKey(meal), kcal: parseInt(kcal), time: time });
+  
+  persistAll(); // Sincroniza Dieta
+
+  document.getElementById('diet-meal').value = '';
+  document.getElementById('diet-kcal').value = '';
+  renderDietData(); 
+  showToast('t-save', 'Refeição Salva!');
+}
+
+function delMeal(i) {
+  if(!confirm('Apagar refeição?')) return;
+  dLog[wSelectedDateStr].items.splice(i, 1);
+  persistAll();
+  renderDietData();
+}
+
+// ─────────────────────────────────────────────────────────────
+// FINALIZAÇÃO
+// ─────────────────────────────────────────────────────────────
+
+// Inicializa o sistema
 init();
+
 </script>
 </body>
 </html>
