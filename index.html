@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>andredistortion's life</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+
 <style>
 :root {
   --radius: 24px; --radius-sm: 16px; --radius-xs: 12px;
@@ -414,7 +418,7 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
       <div class="widget-metrics">
          <div class="wm-header">
            Meu Progresso Hoje
-           <span class="cloud-badge">☁️ Nuvem</span>
+           <span class="cloud-badge">🔥 Nuvem Ativa</span>
          </div>
          <div class="wm-bar-group">
            <div class="wm-label"><span>💉 Glicose (Na Faixa)</span><span id="wm-val-g" class="wm-val">0%</span></div>
@@ -761,7 +765,7 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
       </div>
     </div>
     <div class="sett-group">
-      <div class="sett-gtitle">☁️ Nuvem · JSONBin.io</div>
+      <div class="sett-gtitle">☁️ Nuvem · Google Firebase</div>
       <div class="sitem" onclick="forceSyncToCloud()">
         <div class="si">☁️</div>
         <div class="stx"><div class="sl">Forçar Sincronização</div><div class="ss">Enviar todos os dados para a nuvem agora</div></div>
@@ -787,7 +791,7 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
       </div>
       <input type="file" id="import-file" style="display:none;" accept=".txt" onchange="importBackup(event)">
     </div>
-    <div style="text-align:center;padding:28px 0;color:var(--text-d);font-size:11px;">andredistortion's life v13.1 · ☁️ Cloud Sync Fix</div>
+    <div style="text-align:center;padding:28px 0;color:var(--text-d);font-size:11px;">andredistortion's life v14.0 · 🔥 Firebase Realtime Sync</div>
   </div>
 </div>
 
@@ -797,7 +801,7 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
      <div class="sb-avatar">A</div>
      <div class="sb-user-info">
         <div class="sb-name">André</div>
-        <div class="sb-sync-status" id="sb-sync-status">☁️ Cloud Sync</div>
+        <div class="sb-sync-status" id="sb-sync-status">🔥 Firebase Sync</div>
      </div>
   </div>
   <div class="sb-quick-stats">
@@ -876,18 +880,26 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 
 <script>
 // ─────────────────────────────────────────────────────────────
-// JSONBIN.IO CONFIG
+// FIREBASE CONFIG (NUVEM REAL-TIME)
 // ─────────────────────────────────────────────────────────────
-const JSONBIN_MASTER_KEY = '$2a$10$0rfcwJAspdhUYmipTFqqke18pJOAQHEYfNa6KRJoLUy.XtWqCpkVO';
-const JSONBIN_ACCESS_KEY = '$2a$10$xazXqL.ScXwfvFbZ6aeZ9.R57BXezGCxSGLhoOxndHMdT2NIxUJOS';
-const JSONBIN_BIN_ID_KEY  = 'v_jsonbin_bin_id'; // armazena o bin ID no localStorage
-const JSONBIN_BASE = 'https://api.jsonbin.io/v3';
+const firebaseConfig = {
+  apiKey: "AIzaSyCUbfhYaa6JqPsSmTZkngoHTYZQjhpAYE",
+  authDomain: "andredistortion-40920.firebaseapp.com",
+  projectId: "andredistortion-40920",
+  storageBucket: "andredistortion-40920.firebasestorage.app",
+  messagingSenderId: "19505006527",
+  appId: "1:19505006527:web:97f7810aa473d4cfc838aa",
+  measurementId: "G-D94ZNYF0KF"
+};
 
-let binId = localStorage.getItem(JSONBIN_BIN_ID_KEY) || null;
+firebase.initializeApp(firebaseConfig);
+const dbRef = firebase.database().ref('distortion_data/andre');
+
 let syncDebounceTimer = null;
 let isSyncing = false;
-let pendingSync = false; // NOVA VARIÁVEL: Fila de sincronização
-const SYNC_DELAY = 1000; // Alterado para 1 segundo
+let pendingSync = false;
+const SYNC_DELAY = 1000;
+let lastLocalUpdate = 0; // Previne conflitos enquanto você digita
 
 // ─────────────────────────────────────────────────────────────
 // VARIAVEIS GLOBAIS (estado em memória)
@@ -923,7 +935,6 @@ let modalTarget = '';
 // ─────────────────────────────────────────────────────────────
 function showSync(state, text) {
   const el = document.getElementById('sync-indicator');
-  const dot = el.querySelector('.sync-dot');
   const txt = document.getElementById('sync-text');
   el.className = `sync-indicator show ${state}`;
   txt.textContent = text;
@@ -933,7 +944,7 @@ function showSync(state, text) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// JSONBIN.IO API
+// FIREBASE SYNC LOGIC
 // ─────────────────────────────────────────────────────────────
 function buildState() {
   return {
@@ -971,78 +982,21 @@ function applyState(data) {
   if(data.v_diet_goal)        defaultDietGoal = parseInt(data.v_diet_goal);
 }
 
-async function createBin() {
-  const state = buildState();
-  const res = await fetch(`${JSONBIN_BASE}/b`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Master-Key': JSONBIN_MASTER_KEY,
-      'X-Bin-Name': 'andredistortion-life',
-      'X-Collection-Name': 'life-app'
-    },
-    body: JSON.stringify(state)
-  });
-  if(!res.ok) throw new Error('Falha ao criar bin: ' + res.status);
-  const json = await res.json();
-  binId = json.metadata.id;
-  localStorage.setItem(JSONBIN_BIN_ID_KEY, binId);
-  return binId;
-}
-
-async function readBin() {
-  if(!binId) return null;
-  const res = await fetch(`${JSONBIN_BASE}/b/${binId}/latest`, {
-    headers: { 'X-Master-Key': JSONBIN_MASTER_KEY, 'X-Access-Key': JSONBIN_ACCESS_KEY }
-  });
-  if(res.status === 404) { binId = null; localStorage.removeItem(JSONBIN_BIN_ID_KEY); return null; }
-  if(!res.ok) throw new Error('Falha ao ler bin: ' + res.status);
-  const json = await res.json();
-  return json.record;
-}
-
-async function writeBin(state) {
-  if(!binId) await createBin();
-  const res = await fetch(`${JSONBIN_BASE}/b/${binId}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Master-Key': JSONBIN_MASTER_KEY,
-      'X-Access-Key': JSONBIN_ACCESS_KEY
-    },
-    body: JSON.stringify(state)
-  });
-  if(!res.ok) throw new Error('Falha ao salvar: ' + res.status);
-  return await res.json();
-}
-
-// ─────────────────────────────────────────────────────────────
-// SYNC LOGIC (debounced & queued)
-// ─────────────────────────────────────────────────────────────
 function scheduleSync() {
   clearTimeout(syncDebounceTimer);
   syncDebounceTimer = setTimeout(() => syncToCloud(), SYNC_DELAY);
 }
 
 async function syncToCloud() {
-  if(isSyncing) {
-    pendingSync = true;
-    return;
-  }
-  isSyncing = true;
-  pendingSync = false;
   showSync('syncing', 'Salvando na nuvem…');
   try {
-    await writeBin(buildState());
+    const state = buildState();
+    lastLocalUpdate = state._updated; // Marca o tempo deste envio
+    await dbRef.set(state);
     showSync('ok', 'Salvo na nuvem ✓');
   } catch(e) {
     console.error('Sync error:', e);
     showSync('err', 'Erro ao sincronizar');
-  } finally {
-    isSyncing = false;
-    if (pendingSync) {
-      scheduleSync();
-    }
   }
 }
 
@@ -1054,13 +1008,17 @@ async function forceSyncToCloud() {
 async function forceLoadFromCloud() {
   showSync('syncing', 'Buscando da nuvem…');
   try {
-    const data = await readBin();
+    const snapshot = await dbRef.once('value');
+    const data = snapshot.val();
     if(data) {
       applyState(data);
       applyTheme(curTheme, true);
       document.getElementById('ialarm-time').value = iAlarm.time;
       setAType(iAlarm.type, null, true);
       updateAllData();
+      if(document.getElementById('screen-calendar').classList.contains('active')) { renderCalendar(); renderCalData(); }
+      if(document.getElementById('screen-workout').classList.contains('active')) { renderWCalendar(); renderWData(); }
+      if(document.getElementById('screen-checklist').classList.contains('active')) { renderCLCalendar(); renderCLData(); }
       showSync('ok', 'Dados atualizados ✓');
       showToast('t-save', '🔄 Dados da nuvem carregados!');
     } else {
@@ -1071,22 +1029,35 @@ async function forceLoadFromCloud() {
   }
 }
 
+// 🔥 LISTENER EM TEMPO REAL: Recebe dados alterados por outro aparelho
+dbRef.on('value', (snapshot) => {
+  const data = snapshot.val();
+  // Atualiza apenas se o dado recebido for mais novo que o nosso último envio (evita travar digitação)
+  if(data && data._updated && data._updated > lastLocalUpdate + 1500) {
+    applyState(data);
+    updateAllData();
+    // Re-renderiza as telas caso você esteja com elas abertas no momento
+    if(document.getElementById('screen-calendar').classList.contains('active')) { renderCalendar(); renderCalData(); }
+    if(document.getElementById('screen-workout').classList.contains('active')) { renderWCalendar(); renderWData(); }
+    if(document.getElementById('screen-checklist').classList.contains('active')) { renderCLCalendar(); renderCLData(); }
+    
+    showSync('ok', 'Atualizado pela nuvem ✓');
+    lastLocalUpdate = data._updated; // Iguala os tempos
+  }
+});
+
 // ─────────────────────────────────────────────────────────────
 // INIT — carrega da nuvem e inicializa o app
 // ─────────────────────────────────────────────────────────────
 async function init() {
   const savedTheme = localStorage.getItem('v_theme') || 'dark';
   applyTheme(savedTheme, true);
-
   const loadingText = document.getElementById('loading-text');
 
   try {
-    loadingText.textContent = 'Buscando seus dados…';
-    let data = null;
-
-    if(binId) {
-      data = await readBin();
-    }
+    loadingText.textContent = 'Conectando ao Firebase…';
+    const snapshot = await dbRef.once('value');
+    const data = snapshot.val();
 
     if(data) {
       applyState(data);
@@ -1110,10 +1081,10 @@ async function init() {
           wLog[k] = Array.isArray(wLogRaw[k]) ? { exercises: wLogRaw[k], creatine: '' } : wLogRaw[k];
         }
         applyTheme(curTheme, true);
-        await createBin(); 
+        await forceSyncToCloud();
         loadingText.textContent = 'Migrado para a nuvem ✓';
       } else {
-        await createBin(); 
+        await forceSyncToCloud();
         loadingText.textContent = 'Pronto ✓';
       }
     }
@@ -1150,10 +1121,13 @@ async function init() {
 
   updateClock(); setInterval(updateClock, 1000);
   updateAllData();
+  if(document.getElementById('screen-calendar').classList.contains('active')) { renderCalendar(); renderCalData(); }
+  if(document.getElementById('screen-workout').classList.contains('active')) { renderWCalendar(); renderWData(); }
+  if(document.getElementById('screen-checklist').classList.contains('active')) { renderCLCalendar(); renderCLData(); }
 }
 
 // ─────────────────────────────────────────────────────────────
-// PERSIST — chama scheduleSync em vez de localStorage diretamente
+// PERSIST — salva localmente e na nuvem
 // ─────────────────────────────────────────────────────────────
 function persistAll() {
   localStorage.setItem('v_glucose', JSON.stringify(gReadings));
@@ -1413,7 +1387,7 @@ function addCLItem() {
   if(item && item.trim() !== '') { clCustom.push(item.trim()); persistAll(); renderCLData(); }
 }
 function removeCLItem(idx) {
-  if(!confirm('Remover este item de todos os dias futuros?')) return;
+  if(!confirm('Remover este item de todos dias futuros?')) return;
   clCustom.splice(idx, 1); persistAll(); renderCLData();
 }
 
@@ -1524,7 +1498,6 @@ function renderWData() {
   if(!exercises || exercises.length === 0) {
     html += `<div class="empty-state">Treino vazio. Adicione um exercício ou carregue um perfil.</div><button class="btn-secondary" style="margin-top:10px; width:100%; padding:14px; font-size:13px;" onclick="addWEx()">+ Adicionar Exercício</button>`;
   } else {
-    // AQUI: onchange foi substituído por oninput
     html += exercises.map((ex, i) => `<div class="w-item ${ex.done ? 'done' : ''}" style="margin-bottom:8px;"><div class="w-check" onclick="toggleWCheck(${i})">✓</div><div class="w-details"><input type="text" class="w-input-name" value="${ex.name}" oninput="editWEx(${i}, 'name', this.value)" placeholder="Nome do exercício"><input type="text" class="w-input-reps" value="${ex.reps}" oninput="editWEx(${i}, 'reps', this.value)" placeholder="Séries x Repetições"></div><div class="w-del" onclick="delWEx(${i})">✕</div></div>`).join('');
     html += `<div style="display:flex; gap:10px; margin-top:16px;"><button class="btn-secondary" style="flex:1; margin-bottom:0; font-size:12px; padding:12px;" onclick="addWEx()">+ Exercício</button><button class="btn-primary" style="background:var(--rose); flex:1; font-size:12px; padding:12px;" onclick="saveAsProfile()">💾 Salvar Perfil</button></div>`;
   }
@@ -1535,221 +1508,4 @@ function renderWData() {
 function saveAsProfile() {
   const name = prompt("Nome do perfil (ex: Dia de Costas):"); if(!name || name.trim() === "") return;
   const wDay = wLog[wSelectedDateStr]; if(!wDay || !wDay.exercises || wDay.exercises.length === 0) return;
-  wProfiles[name] = wDay.exercises.map(ex => ({name: ex.name, reps: ex.reps, done: false}));
-  persistAll(); showToast('t-save', 'Perfil Salvo!'); renderWData();
-}
-function loadOrDeleteProfile(p) {
-  if(confirm(`Deseja carregar o perfil "${p}" para o dia de hoje? (Isso substituirá a lista atual)\n\nCancele caso queira excluir este perfil.`)){
-    const copy = JSON.parse(JSON.stringify(wProfiles[p]));
-    if(!wLog[wSelectedDateStr]) wLog[wSelectedDateStr] = { exercises: [], creatine: '' };
-    wLog[wSelectedDateStr].exercises = copy;
-    persistAll(); renderWData(); renderWCalendar();
-  } else {
-    if(confirm(`Deseja DELETAR permanentemente o perfil "${p}"?`)){ delete wProfiles[p]; persistAll(); renderWData(); }
-  }
-}
-function toggleWCheck(i) { if(!wLog[wSelectedDateStr]) return; wLog[wSelectedDateStr].exercises[i].done = !wLog[wSelectedDateStr].exercises[i].done; persistAll(); renderWData(); renderWCalendar(); }
-function editWEx(i, field, val) { if(!wLog[wSelectedDateStr]) return; wLog[wSelectedDateStr].exercises[i][field] = val; persistAll(); }
-function addWEx() {
-  if(!wLog[wSelectedDateStr]) wLog[wSelectedDateStr] = { exercises: [], creatine: '' };
-  wLog[wSelectedDateStr].exercises.push({ name: "", reps: "3 x 10", done: false });
-  persistAll(); renderWData();
-}
-function delWEx(i) {
-  if(!confirm('Remover este exercício do dia?')) return;
-  wLog[wSelectedDateStr].exercises.splice(i, 1);
-  persistAll(); renderWData();
-}
-
-// ─────────────────────────────────────────────────────────────
-// GLICOSE
-// ─────────────────────────────────────────────────────────────
-function np(v){ 
-  if(v==='.' && (ginput.includes('.') || ginput==='')) return; 
-  let next = ginput + v;
-  if(parseFloat(next) > 999) return;
-  if(next.length > 5) return;
-  ginput = next; updGDisplay(); 
-}
-function nd(){ ginput=ginput.slice(0,-1); updGDisplay(); }
-
-function updGDisplay(){
-  const el=document.getElementById('gval-display'); const badge=document.getElementById('gstatus');
-  const ic=document.getElementById('gst-icon'); const tx=document.getElementById('gst-txt');
-  if(!ginput){ el.textContent='—'; el.style.color = 'var(--text)'; if(badge) badge.style.display='none'; return; }
-  el.textContent=ginput; const v=parseFloat(ginput);
-  if(badge) { badge.style.display='inline-flex'; badge.className='gstatus'; }
-  if(v<70){ el.style.color='var(--amber)'; if(badge) { badge.classList.add('s-low'); ic.textContent='▼'; tx.textContent='Hipoglicemia'; } }
-  else if(v<=139){ el.style.color='var(--green)'; if(badge) { badge.classList.add('s-normal'); ic.textContent='●'; tx.textContent='Normal'; } }
-  else if(v<=199){ el.style.color='var(--amber)'; if(badge) { badge.classList.add('s-low'); ic.textContent='▲'; tx.textContent='Elevado'; } }
-  else{ el.style.color='var(--red)'; if(badge) { badge.classList.add('s-high'); ic.textContent='▲'; tx.textContent='Muito Alto'; } }
-}
-
-function selTag(btn,name){
-  if(btn.classList.contains('sel')) { btn.classList.remove('sel'); selMeal=''; document.getElementById('custom-tag').style.display='none'; return; }
-  document.querySelectorAll('.tag-pill').forEach(b=>b.classList.remove('sel'));
-  btn.classList.add('sel'); selMeal=name;
-  const ci=document.getElementById('custom-tag'); ci.style.display=name==='Personalizado'?'block':'none';
-  if(name==='Personalizado') ci.focus();
-}
-
-function saveGlucose(){
-  if(!ginput||parseFloat(ginput)<=0){ showToast('t-save', 'Insira um valor!'); return; }
-  const mealLabel = selMeal ? (selMeal==='Personalizado' ? (document.getElementById('custom-tag').value.trim()||'Personalizado') : selMeal) : 'Sem Tag';
-  const tv=document.getElementById('gtime').value; const now=new Date();
-  const[th,tm]=tv?tv.split(':').map(Number):[now.getHours(),now.getMinutes()];
-  gReadings.unshift({ value:parseFloat(ginput), meal:mealLabel, time:`${String(th).padStart(2,'0')}:${String(tm).padStart(2,'0')}`, date:now.toLocaleDateString('pt-BR'), ts:now.getTime() });
-  if(gReadings.length>500) gReadings.pop();
-  ginput=''; selMeal='';
-  document.querySelectorAll('.tag-pill').forEach(b=>b.classList.remove('sel'));
-  document.getElementById('custom-tag').style.display='none'; document.getElementById('custom-tag').value='';
-  persistAll();
-  updGDisplay(); updateAllData(); showToast('t-save','✓ Medição salva!');
-}
-
-function delReading(i){
-  if(!confirm('Apagar esta medição?')) return;
-  gReadings.splice(i, 1);
-  persistAll();
-  updateAllData(); showToast('t-save', 'Registro apagado!');
-  if(document.getElementById('screen-calendar').classList.contains('active')) { renderCalendar(); renderCalData(); }
-}
-
-function gc(v){return v<70?'var(--amber)':v<=139?'var(--green)':v<=199?'var(--amber)':'var(--red)';}
-function gcHex(v){return v<70?'#ffb347':v<=139?'#4ade80':v<=199?'#ffb347':'#ff6b6b';}
-
-function renderTable(){
-  const tb=document.getElementById('gtable-body');
-  if(gReadings.length===0){tb.innerHTML='<tr><td colspan="5" style="text-align:center;padding:12px;color:var(--text-d);">Vazio</td></tr>'; return;}
-  tb.innerHTML=gReadings.map((r, i)=>{
-    const h=gcHex(r.value); const tagDisplay = r.meal === 'Sem Tag' ? '' : `#${r.meal.toLowerCase().replace(/ /g,'-')}`;
-    return `<tr><td>${r.date.slice(0,5)}</td><td>${r.time}</td><td><span class="vchip" style="background:${h}22;color:${h};border:1px solid ${h}55;">${r.value}</span></td><td style="color:var(--blue);font-size:10px;font-weight:700;">${tagDisplay}</td><td style="text-align:right;"><span class="del-btn" onclick="delReading(${i})">✕</span></td></tr>`;
-  }).join('');
-}
-
-function calcHba1c(){if(gReadings.length<3)return null; const avg=gReadings.reduce((a,b)=>a+b.value,0)/gReadings.length; return(avg+46.7)/28.7;}
-function updateHbA1c(){
-  const v=calcHba1c(); const el = document.getElementById('hba1c-val');
-  if(!v){ if(el) el.textContent='—'; return; }
-  const r=v.toFixed(1);
-  if(el){ el.textContent=`${r}%`; el.style.color = v<5.7 ? 'var(--green)' : v<6.4 ? 'var(--amber)' : 'var(--red)'; }
-}
-
-function setTIRMode(mode) {
-  currentTIRMode = mode;
-  document.getElementById('btn-tir-daily').classList.toggle('active', mode==='daily');
-  document.getElementById('btn-tir-90d').classList.toggle('active', mode==='90d');
-  updateTIR();
-}
-
-function updateTIR(){
-  const todayStr = new Date().toLocaleDateString('pt-BR');
-  const ninetyDaysAgo = new Date().getTime() - (90 * 24 * 60 * 60 * 1000);
-  let targetData = currentTIRMode === 'daily' ? gReadings.filter(r => r.date === todayStr) : gReadings.filter(r => r.ts >= ninetyDaysAgo);
-  const count = targetData.length;
-  document.getElementById('tir-total-readings').textContent = `${count} mediç${count === 1 ? 'ão' : 'ões'}`;
-  if (count === 0) {
-    document.getElementById('tir-low').style.width = '0%'; document.getElementById('tir-norm').style.width = '0%'; document.getElementById('tir-high').style.width = '0%';
-    document.getElementById('tirl-low').textContent = '0%'; document.getElementById('tirl-norm').textContent = '0%'; document.getElementById('tirl-high').textContent = '0%';
-    return;
-  }
-  let low = 0, norm = 0, high = 0;
-  targetData.forEach(r => { if (r.value < 70) low++; else if (r.value <= 139) norm++; else high++; });
-  const plow = (low / count) * 100; const pnorm = (norm / count) * 100; const phigh = (high / count) * 100;
-  document.getElementById('tir-low').style.width = `${plow}%`; document.getElementById('tir-norm').style.width = `${pnorm}%`; document.getElementById('tir-high').style.width = `${phigh}%`;
-  document.getElementById('tirl-low').textContent = `${Math.round(plow)}%`; document.getElementById('tirl-norm').textContent = `${Math.round(pnorm)}%`; document.getElementById('tirl-high').textContent = `${Math.round(phigh)}%`;
-}
-
-function changeMonth(d) { calDate.setMonth(calDate.getMonth() + d); renderCalendar(); }
-function renderCalendar() {
-  const year = calDate.getFullYear(); const month = calDate.getMonth();
-  document.getElementById('cal-month-label').textContent = new Date(year, month, 1).toLocaleDateString('pt-BR', {month:'long', year:'numeric'});
-  const firstDay = new Date(year, month, 1).getDay(); const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const grid = document.getElementById('cal-grid'); grid.innerHTML = '';
-  ['D','S','T','Q','Q','S','S'].forEach(d => { grid.innerHTML += `<div class="cal-dw">${d}</div>`; });
-  for(let i=0; i<firstDay; i++) { grid.innerHTML += `<div class="cal-day empty"></div>`; }
-  for(let i=1; i<=daysInMonth; i++) {
-    const dObj = new Date(year, month, i); const dStr = dObj.toLocaleDateString('pt-BR');
-    const hasData = gReadings.some(r => r.date === dStr);
-    const sel = dStr === selectedCalDate ? 'sel' : ''; const hd = hasData ? 'has-data' : '';
-    grid.innerHTML += `<div class="cal-day ${sel} ${hd}" onclick="selectCalDay('${dStr}')">${i}</div>`;
-  }
-}
-function selectCalDay(dStr) { selectedCalDate = dStr; renderCalendar(); renderCalData(); }
-function renderCalData() {
-  document.getElementById('chart-date-label').textContent = selectedCalDate;
-  const list = document.getElementById('cal-readings'); const chartArea = document.getElementById('cal-chart-area');
-  const dayReadings = gReadings.filter(r => r.date === selectedCalDate).slice().reverse();
-  if(dayReadings.length === 0) { list.innerHTML = '<div class="empty-state">Nenhuma medição nesta data</div>'; chartArea.innerHTML = '<div class="empty-state" style="margin:auto;">Selecione um dia com medições</div>'; return; }
-  list.innerHTML = dayReadings.slice().reverse().map(r => {
-    const origIndex = gReadings.findIndex(x => x.ts === r.ts);
-    const h = gcHex(r.value); const tagDisplay = r.meal === 'Sem Tag' ? '' : `#${r.meal.toLowerCase().replace(/ /g,'-')}`;
-    return `<div class="hist-item"><div class="hdot" style="background:${h}"></div><div style="flex:1;"><div style="font-size:12px;font-weight:800;color:var(--text);">${r.time} <span style="font-size:10px;color:var(--text-d);font-weight:500;">- ${tagDisplay}</span></div></div><div style="text-align:right; display:flex; align-items:center; gap:12px;"><div style="font-size:16px;font-weight:800;color:${h};">${r.value}</div><span class="del-btn" onclick="delReading(${origIndex})">✕</span></div></div>`;
-  }).join('');
-  const globalMax = Math.max(300, ...gReadings.map(r => r.value));
-  chartArea.innerHTML = dayReadings.map(r => {
-    const h = gcHex(r.value); const heightPct = Math.max(5, Math.min(100, (r.value / globalMax) * 100));
-    return `<div class="bar-col"><div class="bar-fill" style="height: ${heightPct}%; background: ${h}22; border: 1px solid ${h}55;"><span class="bar-val">${r.value}</span></div><span class="bar-time">${r.time}</span></div>`;
-  }).join('');
-}
-
-// ─────────────────────────────────────────────────────────────
-// SONO
-// ─────────────────────────────────────────────────────────────
-function setDelay(pill,m){document.querySelectorAll('.delay-pills .pill').forEach(p=>p.classList.remove('active')); pill.classList.add('active'); sleepDelay=m;}
-function calcCycles(){
-  const[sh,sm]=document.getElementById('sleep-time').value.split(':').map(Number); const[wh,wm]=document.getElementById('wake-limit').value.split(':').map(Number);
-  const base=new Date(); const sb=new Date(base); sb.setHours(sh,sm,0,0); const fa=new Date(sb.getTime()+sleepDelay*60000); const wl=new Date(base); wl.setHours(wh,wm,0,0);
-  if(wl<=fa) wl.setDate(wl.getDate()+1);
-  const res=[];
-  for(let c=2;c<=7;c++){
-    const wt=new Date(fa.getTime()+c*90*60000);
-    if(wt<=wl){ const tot=c*90; res.push({c,lbl:`${String(wt.getHours()).padStart(2,'0')}:${String(wt.getMinutes()).padStart(2,'0')}`,dur:`${Math.floor(tot/60)}h${tot%60>0?` ${tot%60}min`:''} · ${c} ciclo${c>1?'s':''}`,q:c>=5?'best':c>=4?'ok':'min'}); }
-  }
-  const con=document.getElementById('cycles-res'); con.classList.add('vis'); res.sort((a,b)=>b.c-a.c);
-  if(res.length===0){con.innerHTML='<div class="sinfo"><span style="font-size:14px;flex-shrink:0;">⚠️</span><span>Nenhum ciclo cabe. Ajuste o horário.</span></div>'; return;}
-  con.innerHTML='<div class="slabel" style="margin-top:10px;">⭐ Melhores horários</div>';
-  res.forEach(c=>{
-    const bc=c.q==='best'?'cb-best':c.q==='ok'?'cb-ok':'cb-min'; const bl=c.q==='best'?'★ Ideal':c.q==='ok'?'Bom':'Mínimo'; const rc=c.q==='best'?'rec':'';
-    const dots=Array.from({length:c.c},()=>'<div class="cdot f"></div>').join('')+Array.from({length:Math.max(0,6-c.c)},()=>'<div class="cdot"></div>').join('');
-    const card=document.createElement('div'); card.className=`ccard ${rc}`;
-    card.innerHTML=`<div class="cinfo"><div class="ctime">${c.lbl}</div><div class="cdur">${c.dur}</div><div class="cdots">${dots}</div></div><span class="cbadge ${bc}">${bl}</span>`;
-    card.onclick=()=>showToast('t-save',`⏰ Alarme para ${c.lbl}`); con.appendChild(card);
-  });
-  setTimeout(()=>con.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
-}
-
-// ─────────────────────────────────────────────────────────────
-// INSULINA
-// ─────────────────────────────────────────────────────────────
-function dayKey(){const d=new Date(); return`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;}
-function checkInsulin(){
-  const btn = document.getElementById('db-check-card');
-  if(btn && btn.classList.contains('done')) return;
-  const now=new Date(); const ts=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  iLog.unshift({date:now.toLocaleDateString('pt-BR'), time:ts, key:dayKey(), ts:now.getTime()});
-  if(iLog.length>90) iLog.pop();
-  persistAll();
-  updateAllData(); showToast('t-save','💊 Check Salvo!');
-}
-function updateIState(){
-  const done=iLog.some(e=>e.key===dayKey());
-  const card=document.getElementById('db-check-card'); const ic=document.getElementById('db-check-icon'); const lb=document.getElementById('db-check-label');
-  if(done){ if(card) card.className='db-card db-check done'; if(ic) ic.textContent='✅'; if(lb) lb.textContent='Feito'; }
-  else { if(card) card.className='db-card db-check pending'; if(ic) ic.textContent='💊'; if(lb) lb.textContent='Check'; }
-}
-function setAType(t,btn,silent){
-  insulinAlarmType=t;
-  ['normal','vibrate','off'].forEach(x=>{const b=document.getElementById(`at-${x}`); if(b) b.classList.toggle('active',x===t);});
-}
-function saveIAlarm(){
-  iAlarm={time: document.getElementById('ialarm-time').value, type: insulinAlarmType};
-  persistAll();
-  showToast('t-save',`⏰ Alarme salvo!`);
-}
-
-// INICIA O APP
-init();
-</script>
-</body>
-</html>
+  wProfiles[name] = wDay.exercises.map(ex => ({name: ex.name, reps: ex
