@@ -1943,105 +1943,58 @@ function calcCycles(){
     const bc=c.q==='best'?'cb-best':c.q==='ok'?'cb-ok':'cb-min'; const bl=c.q==='best'?'★ Ideal':c.q==='ok'?'Bom':'Mínimo'; const rc=c.q==='best'?'rec':'';
     const dots=Array.from({length:c.c},()=>'<div class="cdot f"></div>').join('')+Array.from({length:Math.max(0,6-c.c)},()=>'<div class="cdot"></div>').join('');
     const card=document.createElement('div'); card.className=`ccard ${rc}`;
-    card.innerHTML=`<div class="cinfo"><div class="ctime">${c.lbl}</div><div class="function saveAsProfile() {
-  const name = prompt("Nome do perfil (ex: Dia de Costas):");
-  if(!name || name.trim() === "") return;
-  
-  const wDay = wLog[wSelectedDateStr];
-  if(!wDay || !wDay.exercises || wDay.exercises.length === 0) {
-    alert("Adicione exercícios antes de salvar um perfil.");
-    return;
-  }
-  
-  // Clona os exercícios mas reseta o status 'done' para o perfil
-  const cleanEx = wDay.exercises.map(ex => ({name: ex.name, reps: ex.reps, done: false}));
-  wProfiles[safeKey(name)] = cleanEx;
-  
-  persistAll(); // Salva e Sincroniza
-  showToast('t-save', 'Perfil Salvo na Nuvem!');
-  renderWData();
+    card.innerHTML=`<div class="cinfo"><div class="ctime">${c.lbl}</div><div class="cdur">${c.dur}</div><div class="cdots">${dots}</div></div><span class="cbadge ${bc}">${bl}</span>`;
+    card.onclick=()=>showToast('t-save',`⏰ Alarme para ${c.lbl}`); 
+    con.appendChild(card);
+  });
+  setTimeout(()=>con.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
 }
 
-function loadOrDeleteProfile(p) {
-  if(confirm(`Deseja carregar o perfil "${p}" para hoje? (Substituirá a lista atual)`)){
-      const copy = JSON.parse(JSON.stringify(wProfiles[p]));
-      if(!wLog[wSelectedDateStr]) wLog[wSelectedDateStr] = { exercises: [], creatine: '' };
-      wLog[wSelectedDateStr].exercises = copy;
-      persistAll();
-      refreshUI();
+// ─────────────────────────────────────────────────────────────
+// INSULINA E ALARMES
+// ─────────────────────────────────────────────────────────────
+function dayKey(){const d=new Date(); return`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;}
+
+function checkInsulin(){
+  const btn = document.getElementById('db-check-card');
+  if(btn && btn.classList.contains('done')) return;
+  const now=new Date(); const ts=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  
+  iLog.unshift({date:getSafeDate(now), time:ts, key:dayKey(), ts:now.getTime()});
+  if(iLog.length>90) iLog.pop(); 
+  
+  persistAll(); // Sincroniza com o Firebase
+  updateAllData(); 
+  showToast('t-save','💊 Check Salvo!');
+}
+
+function updateIState(){
+  const done=iLog.some(e=>e.key===dayKey());
+  const card=document.getElementById('db-check-card'); const ic=document.getElementById('db-check-icon'); const lb=document.getElementById('db-check-label');
+  if(done){
+    if(card) card.className='db-card db-check done'; if(ic) ic.textContent='✅'; if(lb) lb.textContent='Feito';
   } else {
-      if(confirm(`Deseja DELETAR permanentemente o perfil "${p}"?`)){
-          delete wProfiles[p];
-          persistAll();
-          renderWData();
-      }
+    if(card) card.className='db-card db-check pending'; if(ic) ic.textContent='💊'; if(lb) lb.textContent='Check';
   }
 }
 
-function toggleWCheck(i) { 
-  if(!wLog[wSelectedDateStr]) return;
-  wLog[wSelectedDateStr].exercises[i].done = !wLog[wSelectedDateStr].exercises[i].done; 
-  persistAll(); 
+function setAType(t,btn,silent){
+  insulinAlarmType=t;
+  ['normal','vibrate','off'].forEach(x=>{const b=document.getElementById(`at-${x}`); if(b) b.classList.toggle('active',x===t);});
 }
 
-function editWEx(i, field, val) { 
-  if(!wLog[wSelectedDateStr]) return;
-  wLog[wSelectedDateStr].exercises[i][field] = val; 
-  persistAll(); 
-}
-
-function addWEx() {
-  if(!wLog[wSelectedDateStr]) wLog[wSelectedDateStr] = { exercises: [], creatine: '' };
-  wLog[wSelectedDateStr].exercises.push({ name: "", reps: "3 x 10", done: false });
-  persistAll();
-  renderWData();
-}
-
-function delWEx(i) {
-  if(!confirm('Remover este exercício do dia?')) return;
-  wLog[wSelectedDateStr].exercises.splice(i, 1);
-  persistAll();
-  renderWData();
-}
-
-// ─────────────────────────────────────────────────────────────
-// CONTINUAÇÃO: DIETA E CALORIAS
-// ─────────────────────────────────────────────────────────────
-
-function addMeal() {
-  const meal = document.getElementById('diet-meal').value;
-  const kcal = document.getElementById('diet-kcal').value;
-  const time = document.getElementById('diet-time').value;
-  
-  if(!meal || !kcal || !time) {
-    showToast('t-save', 'Preencha todos os campos!');
-    return;
-  }
-
-  if(!dLog[wSelectedDateStr]) dLog[wSelectedDateStr] = { goal: defaultDietGoal, items: [] };
-  
-  dLog[wSelectedDateStr].items.unshift({ meal: safeKey(meal), kcal: parseInt(kcal), time: time });
-  
-  persistAll(); // Sincroniza Dieta
-
-  document.getElementById('diet-meal').value = '';
-  document.getElementById('diet-kcal').value = '';
-  renderDietData(); 
-  showToast('t-save', 'Refeição Salva!');
-}
-
-function delMeal(i) {
-  if(!confirm('Apagar refeição?')) return;
-  dLog[wSelectedDateStr].items.splice(i, 1);
-  persistAll();
-  renderDietData();
+function saveIAlarm(){
+  const time=document.getElementById('ialarm-time').value;
+  iAlarm={time, type:insulinAlarmType}; 
+  persistAll(); // Sincroniza alarme com a nuvem
+  showToast('t-save',`⏰ Alarme salvo!`);
 }
 
 // ─────────────────────────────────────────────────────────────
 // FINALIZAÇÃO
 // ─────────────────────────────────────────────────────────────
 
-// Inicializa o sistema
+// Inicializa o sistema completo
 init();
 
 </script>
