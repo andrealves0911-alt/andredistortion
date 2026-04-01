@@ -38,7 +38,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 /* TOP NAV */
 .top-nav{display:flex;align-items:center;gap:5px;padding:8px 14px;overflow-x:auto;scrollbar-width:none;flex-shrink:0;border-bottom:1px solid var(--glass-b);background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);position:sticky;top:0;z-index:500;}
 .top-nav::-webkit-scrollbar{display:none;}
-.top-nav-brand{font-size:12px;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;flex-shrink:0;}
+.top-nav-brand{font-size:12px;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;flex-shrink:0;margin-right:4px;}
 .top-nav-div{width:1px;height:18px;background:var(--glass-b);flex-shrink:0;margin:0 3px;}
 .nav-btn{display:flex;align-items:center;gap:4px;padding:6px 11px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--text-m);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:inherit;transition:all .18s;}
 .nav-btn:hover{background:var(--surface-h);color:var(--text);}
@@ -119,6 +119,15 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .mc-title{font-size:12px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mc-desc{font-size:9px;font-weight:600;color:var(--text-m);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mc-orb{position:absolute;border-radius:50%;filter:blur(30px);pointer-events:none;width:80px;height:80px;top:-10px;right:-10px;opacity:0.3;}
+
+/* GRADE HORÁRIA WIDGET (HOME) */
+.sched-widget{background:var(--glass);border:1px solid var(--glass-b);border-radius:22px;padding:18px;margin-bottom:14px;backdrop-filter:blur(16px);overflow-x:auto;}
+.sched-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.sched-badge{background:#63839c;color:#fff;font-size:10px;font-weight:800;padding:4px 8px;border-radius:6px;text-transform:uppercase;}
+.sched-grid{display:grid;grid-template-columns:55px repeat(5, minmax(100px, 1fr));gap:4px;min-width:600px;}
+.sched-cell{background:var(--surface-h);border-radius:6px;padding:6px;font-size:10px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:40px;color:var(--text-m);font-weight:700;}
+.sched-header-cell{background:var(--surface);color:var(--text);font-weight:800;}
+.sched-block{background:#5cb85c;color:#fff;border-radius:6px;padding:6px;font-size:9px;font-weight:800;text-align:center;display:flex;flex-direction:column;justify-content:center;line-height:1.3;box-shadow:0 2px 8px rgba(92,184,92,0.3);}
 
 /* HOME CHECKLIST & CARDS */
 .home-checklist-card{background:var(--glass);border:1px solid var(--glass-b);border-radius:var(--radius);padding:18px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
@@ -336,7 +345,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .scontent{padding:14px 16px 100px;overflow-y:auto;flex:1;}
 .sinfo{display:flex;gap:9px;padding:12px 14px;background:rgba(180,127,255,.08);border:1px solid rgba(180,127,255,.2);border-radius:var(--radius-sm);margin-bottom:14px;font-size:12px;font-weight:600;color:var(--text-m);line-height:1.5;}
 
-/* NOVOS ESTILOS - ETAPAS 1 A 4 */
+/* NOVOS ESTILOS */
 .btn-mono{background:var(--surface-h);color:var(--text);border:1px solid var(--glass-b);width:100%;padding:10px;border-radius:var(--radius-sm);font-size:12px;font-weight:700;cursor:pointer;transition:all .3s;}
 .btn-mono:active{transform:scale(.97);background:var(--glass-b);}
 .notes-area{width:100%;height:150px;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:inherit;padding:12px;outline:none;resize:none;margin-top:8px;}
@@ -345,11 +354,28 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .grade-r{color:var(--red);font-weight:800;}
 .pomodoro-wrap{display:flex;flex-direction:column;align-items:center;padding:20px;background:var(--glass);border:1px solid var(--glass-b);border-radius:var(--radius);margin-bottom:14px;}
 .pomodoro-time{font-size:48px;font-weight:800;letter-spacing:-2px;margin:10px 0;}
-.study-card{background:var(--glass);border:1px solid var(--glass-b);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;}
+
+/* NOVOS BOTÕES ESTUDO */
+.btn-new-modern {background:rgba(255,179,71,.1); color:var(--amber); border:1px solid rgba(255,179,71,.3); padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer; transition:all 0.2s;}
+.btn-new-modern:active {background:rgba(255,179,71,.2);}
+.edit-btn-modern {width:28px; height:28px; background:var(--surface-h); border:1px solid var(--glass-b); border-radius:8px; display:flex; justify-content:center; align-items:center; font-size:12px; color:var(--text-m); cursor:pointer; transition:0.2s;}
+.edit-btn-modern:active {background:var(--glass-b);}
+.study-card{background:var(--glass);border:1px solid var(--glass-b);border-radius:var(--radius-sm);padding:16px;margin-bottom:10px;}
+
 .charts-row{display:grid;grid-template-columns:1fr;gap:14px;}
 @media(min-width:860px){.charts-row{grid-template-columns:1fr 1fr;}}
 .study-layout{display:grid;grid-template-columns:1fr;gap:20px;}
 @media(min-width:860px){.study-layout{grid-template-columns:1fr 1fr;}}
+
+/* GRADE HORÁRIA WIDGET (HOME) */
+.sched-widget{background:var(--glass);border:1px solid var(--glass-b);border-radius:22px;padding:18px;margin-bottom:14px;backdrop-filter:blur(16px);overflow-x:auto;}
+.sched-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.sched-badge{background:#63839c;color:#fff;font-size:10px;font-weight:800;padding:4px 8px;border-radius:6px;text-transform:uppercase;}
+.sched-grid{display:grid;grid-template-columns:55px repeat(5, minmax(100px, 1fr));gap:4px;min-width:600px;}
+.sched-cell{background:var(--surface-h);border-radius:6px;padding:6px;font-size:10px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:40px;color:var(--text-m);font-weight:700;}
+.sched-header-cell{background:var(--surface);color:var(--text);font-weight:800;}
+.sched-block{background:#5cb85c;color:#fff;border-radius:6px;padding:6px;font-size:9px;font-weight:800;text-align:center;display:flex;flex-direction:column;justify-content:center;line-height:1.3;box-shadow:0 2px 8px rgba(92,184,92,0.3);}
+
 </style>
 </head>
 <body data-theme="dark">
@@ -408,6 +434,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
           <div><div class="ww-time" id="ww-time-big">00:00</div><div class="ww-date" id="ww-date-big">—</div></div>
           <div style="text-align:right;z-index:1;"><div style="font-size:32px;margin-bottom:2px;">🌤️</div><div style="font-size:10px;font-weight:700;opacity:0.9;">Curitiba</div></div>
         </div>
+        
         <div class="widget-metrics">
           <div class="wm-header">
             <span>Meu Progresso Hoje</span>
@@ -418,6 +445,17 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
           <div class="wm-bar-group"><div class="wm-label"><span>✅ Checklist</span><span id="wm-val-c" class="wm-val">0%</span></div><div class="wm-bar"><div class="wm-fill" id="wm-fill-c" style="background:var(--blue);width:0%;"></div></div></div>
           <div class="wm-bar-group"><div class="wm-label"><span>🥗 Calorias</span><span id="wm-val-d" class="wm-val">0 / 4000</span></div><div class="wm-bar"><div class="wm-fill" id="wm-fill-d" style="background:var(--amber);width:0%;"></div></div></div>
         </div>
+
+        <div class="sched-widget">
+          <div class="sched-header">
+            <span style="font-size:13px;font-weight:800;color:var(--text);">📅 Minha Grade</span>
+            <span class="sched-badge">1º Semestre</span>
+          </div>
+          <div id="home-schedule-grid">
+            <div class="empty-state">Nenhuma aula cadastrada.</div>
+          </div>
+        </div>
+
         <div class="menu-cards">
           <div class="menu-card" onclick="goTo('glucose')"><div class="mc-orb" style="background:var(--blue);"></div><div class="mc-icon">💉</div><div class="mc-text"><div class="mc-title">Glicose</div><div class="mc-desc">Registro e métricas</div></div></div>
           <div class="menu-card" onclick="goTo('workout')"><div class="mc-orb" style="background:var(--rose);"></div><div class="mc-icon">💪</div><div class="mc-text"><div class="mc-title">Treino & Dieta</div><div class="mc-desc">Rotina e carga</div></div></div>
@@ -427,6 +465,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
           <div class="menu-card" onclick="goTo('settings')"><div class="mc-orb" style="background:var(--glass-b);"></div><div class="mc-icon">⚙️</div><div class="mc-text"><div class="mc-title">Ajustes</div><div class="mc-desc">App & Backup</div></div></div>
         </div>
       </div>
+      
       <div class="home-right">
         <div class="home-checklist-card">
           <div class="hc-header">
@@ -438,10 +477,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
         
         <div class="home-checklist-card" style="margin-top:14px;">
           <div class="hc-header">
-            <div><div class="hc-title">📚 Matérias de Hoje</div></div>
-            <button class="hc-btn-all" onclick="goTo('study')" style="color:var(--amber);border-color:rgba(255,179,71,.3);background:rgba(255,179,71,.1);">Estudar →</button>
+            <div><div class="hc-title">📚 Matérias</div></div>
+            <button class="hc-btn-all" onclick="goTo('study')" style="color:var(--amber);border-color:rgba(255,179,71,.3);background:rgba(255,179,71,.1);">Estudos →</button>
           </div>
-          <div id="home-subjects-area"><div class="empty-state">Nenhuma aula hoje.</div></div>
+          <div id="home-subjects-area"><div class="empty-state">Nenhuma matéria cadastrada.</div></div>
         </div>
 
         <div class="home-checklist-card" style="margin-top:14px;">
@@ -641,6 +680,16 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <div id="screen-study" class="screen">
   <div class="screen-header"><div class="screen-title">Estudos & Foco</div></div>
   <div class="scontent">
+
+    <div class="sched-widget" style="margin-bottom:20px;">
+      <div class="sched-header">
+        <span style="font-size:14px;font-weight:800;color:var(--text);">📅 Grade Horária</span>
+        <span class="sched-badge">1º Semestre</span>
+      </div>
+      <div id="study-schedule-grid">
+        <div class="empty-state">Carregando grade...</div>
+      </div>
+    </div>
     
     <div class="study-layout">
       <div>
@@ -672,7 +721,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
     <div class="slabel" style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
       <span>📚 Minhas Matérias</span>
-      <button class="edit-date-btn" style="color:var(--amber);border-color:var(--amber);" onclick="openSubjectModal(-1)">+ Nova</button>
+      <button class="btn-new-modern" onclick="openSubjectModal(-1)">+ Nova</button>
     </div>
     <div id="study-subjects-list"></div>
 
@@ -767,7 +816,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <div class="sitem" onclick="clearAllData()"><div class="si" style="color:var(--red);">🗑️</div><div class="stx"><div class="sl" style="color:var(--red);">Apagar tudo</div><div class="ss">Remoção irreversível</div></div></div>
       <input type="file" id="import-file" style="display:none;" accept=".txt" onchange="importBackup(event)">
     </div>
-    <div style="text-align:center;padding:24px 0;color:var(--text-d);font-size:11px;">andredistortion's life v19.0 · Firebase Sync</div>
+    <div style="text-align:center;padding:24px 0;color:var(--text-d);font-size:11px;">andredistortion's life v20.0 · Firebase Sync</div>
   </div>
 </div>
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
@@ -848,13 +897,18 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div class="modal-box">
     <div class="modal-title">📚 Editar Matéria</div>
     <div style="display:flex;flex-direction:column;gap:12px;">
-      <input type="text" id="sub-name" placeholder="Nome ou Código..." style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px;outline:none;font-family:inherit;">
+      <input type="text" id="sub-name" placeholder="Nome da Matéria (Ex: Física IV)" style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px;outline:none;font-family:inherit;">
+      
+      <input type="text" id="sub-code" placeholder="Código da Turma (Ex: TE320 NA)" style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px;outline:none;font-family:inherit;">
+
       <div style="display:flex;gap:10px;">
         <div style="flex:1"><label style="font-size:10px;color:var(--text-m);">Início</label><input type="time" id="sub-start" style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px;outline:none;font-family:inherit;"></div>
         <div style="flex:1"><label style="font-size:10px;color:var(--text-m);">Fim</label><input type="time" id="sub-end" style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px;outline:none;font-family:inherit;"></div>
       </div>
-      <input type="text" id="sub-days" placeholder="Dias (Ex: Seg, Qua)" style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px;outline:none;font-family:inherit;">
-      <input type="text" id="sub-room" placeholder="Sala / Local (Opcional)" style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px;outline:none;font-family:inherit;">
+      
+      <input type="text" id="sub-days" placeholder="Dias (Ex: Seg, Ter, Qua)" style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px;outline:none;font-family:inherit;">
+      
+      <input type="text" id="sub-room" placeholder="Sala / Local (Ex: PK-03)" style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px;outline:none;font-family:inherit;">
       
       <div style="display:flex;gap:10px;align-items:center;">
         <label style="font-size:11px;color:var(--text-m);">Qtd. Provas:</label>
@@ -863,7 +917,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <div id="sub-exams-container" style="display:flex;flex-direction:column;gap:8px;max-height:150px;overflow-y:auto;"></div>
       
       <div style="display:flex;gap:10px;align-items:center;margin-top:10px;background:var(--surface-h);padding:10px;border-radius:10px;">
-        <label style="font-size:11px;color:var(--text-m);flex:1;">Alerta de Faltas (Vermelho a partir de):</label>
+        <label style="font-size:11px;color:var(--text-m);flex:1;">Limite de Faltas:</label>
         <input type="number" id="sub-absences-limit" style="width:60px;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:10px;color:var(--red);font-size:14px;font-weight:700;padding:10px;outline:none;text-align:center;" value="10">
       </div>
     </div>
@@ -1033,11 +1087,30 @@ dbRef.on('value',(snap)=>{
   if(document.getElementById('screen-calendar').classList.contains('active')){renderCalendar();renderCalData();}
   if(document.getElementById('screen-workout').classList.contains('active')){renderWCalendar();renderWData();renderWeightChart();renderLoadChart();}
   if(document.getElementById('screen-checklist').classList.contains('active')){renderCLCalendar();renderCLData();}
-  if(document.getElementById('screen-study').classList.contains('active')){renderSubjects();updatePomodoroSubjectList();renderStudyChart();}
+  if(document.getElementById('screen-study').classList.contains('active')){renderSubjects();updatePomodoroSubjectList();renderStudyChart();renderScheduleGrids();}
 }
 
 // ═══════════════════════════════════════════════════════════
-// INIT E FUNÇÕES GLOBAIS
+// SEED INICIAL DA GRADE (APENAS SE ESTIVER VAZIO)
+// ═══════════════════════════════════════════════════════════
+if(!studySubjects || studySubjects.length === 0) {
+  studySubjects = [
+    {name: "FÍSICA IV PARA EE", code: "TE320 NA", start: "18:30", end: "20:30", days: "Seg", room: "PK-03", absencesLimit: 10, absencesCount: 0, exams:[]},
+    {name: "FÍSICA IV PARA EE", code: "TE320 NA", start: "20:30", end: "22:30", days: "Qua", room: "PK-03", absencesLimit: 10, absencesCount: 0, exams:[]},
+    {name: "SINAIS E SISTEMAS", code: "TE322 NA", start: "20:30", end: "22:30", days: "Seg", room: "PK-01", absencesLimit: 10, absencesCount: 0, exams:[]},
+    {name: "SINAIS E SISTEMAS", code: "TE322 NA", start: "18:30", end: "20:30", days: "Qua", room: "PK-01", absencesLimit: 10, absencesCount: 0, exams:[]},
+    {name: "FENÔMENO DE TRANSPORTE", code: "TH063 ELTDA", start: "15:30", end: "17:30", days: "Ter, Qui", room: "", absencesLimit: 10, absencesCount: 0, exams:[]},
+    {name: "EQUAÇÕES DIFERENCIAIS", code: "TE315 NA", start: "18:30", end: "20:30", days: "Ter", room: "PK-03", absencesLimit: 10, absencesCount: 0, exams:[]},
+    {name: "EQUAÇÕES DIFERENCIAIS", code: "TE315 NA", start: "20:30", end: "22:30", days: "Qui", room: "PK-03", absencesLimit: 10, absencesCount: 0, exams:[]},
+    {name: "ADMINISTRAÇÃO DE EMP.", code: "TE345 NA", start: "20:30", end: "22:30", days: "Ter", room: "PK-07", absencesLimit: 14, absencesCount: 12, exams:[]},
+    {name: "ADMINISTRAÇÃO DE EMP.", code: "TE345 NA", start: "18:30", end: "20:30", days: "Sex", room: "PK-07", absencesLimit: 14, absencesCount: 12, exams:[]},
+    {name: "LAB DE CONVERSÃO", code: "TE325 NA", start: "18:30", end: "20:30", days: "Qui", room: "PK-12", absencesLimit: 3, absencesCount: 2, exams:[]}
+  ];
+  localStorage.setItem('v_study_subjects', JSON.stringify(studySubjects));
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT E ETAPA 1 A 4 (MISTO)
 // ═══════════════════════════════════════════════════════════
 function startOffline(){
   document.getElementById('loading-overlay').classList.add('hidden');
@@ -1146,6 +1219,7 @@ function updateHomeWidgets(){
   renderHomeChecklist(todayStr,gTir,wPct);
   renderHomeSubjects();
   renderHomeAbsencesRanking();
+  renderScheduleGrids();
 }
 
 function renderHomeChecklist(todayStr,gTir,wPct){
@@ -1169,16 +1243,15 @@ function renderHomeChecklist(todayStr,gTir,wPct){
 function renderHomeSubjects() {
   const area = document.getElementById('home-subjects-area');
   if(!area) return;
-  const todayStr = new Date().toLocaleDateString('pt-BR', {weekday: 'short'}).replace('.','').toLowerCase();
-  const subjectsToday = studySubjects.filter(s => s.days && s.days.toLowerCase().includes(todayStr.slice(0,3)));
-  if(subjectsToday.length === 0) {
-     area.innerHTML = '<div class="empty-state" style="padding:10px 0;">Nenhuma aula programada para hoje.</div>';
+  if(studySubjects.length === 0) {
+     area.innerHTML = '<div class="empty-state" style="padding:10px 0;">Nenhuma matéria cadastrada.</div>';
      return;
   }
   let html = '';
-  subjectsToday.forEach(s => {
+  // Exibindo TODAS as matérias como solicitado
+  studySubjects.forEach(s => {
      let roomHtml = s.room ? `<div style="font-size:10px;color:var(--text-d);margin-top:2px;">📍 ${s.room}</div>` : '';
-     html += `<div class="hc-item"><div style="flex:1;"><div class="hc-label">${s.name}</div><div class="hc-sublabel" style="font-weight:800;color:var(--amber);">${s.start} às ${s.end}</div>${roomHtml}</div></div>`;
+     html += `<div class="hc-item"><div style="flex:1;"><div class="hc-label">${s.name}</div><div class="hc-sublabel" style="font-weight:800;color:var(--amber);">${s.start} às ${s.end} - ${s.days}</div>${roomHtml}</div></div>`;
   });
   area.innerHTML = html;
 }
@@ -1193,7 +1266,7 @@ function renderHomeAbsencesRanking() {
   let ranked = [...studySubjects].sort((a,b) => {
     let pA = (a.absencesCount || 0) / (a.absencesLimit || 10);
     let pB = (b.absencesCount || 0) / (b.absencesLimit || 10);
-    return pB - pA;
+    return pB - pA; // Descendente por porcentagem
   });
   let toShow = ranked.filter(s => (s.absencesCount || 0) > 0).slice(0, 4);
   if(toShow.length === 0) {
@@ -1212,6 +1285,43 @@ function renderHomeAbsencesRanking() {
     </div>`;
   });
   area.innerHTML = html;
+}
+
+function renderScheduleGrids() {
+  const containers = ['home-schedule-grid', 'study-schedule-grid'];
+  const slots = [
+    {label: '15:30\n17:30', start:'15:30'},
+    {label: '18:30\n20:30', start:'18:30'},
+    {label: '20:30\n22:30', start:'20:30'}
+  ];
+  const days = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'];
+  
+  let html = '<div class="sched-grid">';
+  html += '<div class="sched-cell sched-header-cell">Horário</div>';
+  days.forEach(d => html += `<div class="sched-cell sched-header-cell">${d}</div>`);
+  
+  slots.forEach(slot => {
+     html += `<div class="sched-cell" style="background:var(--surface); font-weight:800;">${slot.label.replace('\n','<br>')}</div>`;
+     days.forEach(d => {
+        const sub = studySubjects.find(s => s.days.includes(d) && s.start === slot.start);
+        if(sub) {
+           html += `<div class="sched-block">
+             <div style="font-size:10px;font-weight:900;opacity:0.9;">${sub.code||''}</div>
+             <div style="margin:4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${sub.name}">${sub.name}</div>
+             <div style="color:rgba(255,255,255,0.7);font-size:8px;">${sub.start} - ${sub.end}</div>
+             ${sub.room ? `<div style="margin-top:2px;color:#fff;font-weight:800;font-size:9px;">📍 ${sub.room}</div>` : ''}
+           </div>`;
+        } else {
+           html += `<div class="sched-cell"></div>`;
+        }
+     });
+  });
+  html += '</div>';
+
+  containers.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = html;
+  });
 }
 
 function hcToggle(item){
@@ -1245,7 +1355,7 @@ function goTo(s){
   if(s==='calendar'){calDate=new Date();selectedCalDate=globalDateStr;renderCalendar();renderCalData(); document.getElementById('screen-calendar').classList.add('active');}
   if(s==='workout'){wCalDate=new Date();wSelectedDateStr=globalDateStr;renderWCalendar();renderWData();setTimeout(()=>{renderWeightChart();renderLoadChart();},100);}
   if(s==='checklist'){clCalDate=new Date();clSelectedDateStr=globalDateStr;renderCLCalendar();renderCLData();}
-  if(s==='study'){renderSubjects();updatePomodoroSubjectList();renderStudyChart();}
+  if(s==='study'){renderSubjects();updatePomodoroSubjectList();renderStudyChart();renderScheduleGrids();}
   if(s==='home')updateHomeWidgets();
 }
 function goBack(){goTo('home');}
@@ -1736,7 +1846,7 @@ function renderSubjects() {
     html += `<div class="study-card">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div style="font-size:14px;font-weight:800;color:var(--text);">${sub.name}</div>
-        <button class="edit-btn" style="margin:0;" onclick="openSubjectModal(${i})">✏️</button>
+        <button class="edit-btn-modern" style="margin:0;" onclick="openSubjectModal(${i})">✏️</button>
       </div>
       <div style="font-size:11px;color:var(--text-m);font-weight:700;margin-top:4px;">🕒 ${sub.start} às ${sub.end}${roomHtml}</div>
       
@@ -1778,6 +1888,7 @@ function openSubjectModal(i) {
   let exContainer = document.getElementById('sub-exams-container');
   if(i < 0) {
     document.getElementById('sub-name').value = '';
+    document.getElementById('sub-code').value = '';
     document.getElementById('sub-start').value = '';
     document.getElementById('sub-end').value = '';
     document.getElementById('sub-days').value = '';
@@ -1788,6 +1899,7 @@ function openSubjectModal(i) {
   } else {
     let sub = studySubjects[i];
     document.getElementById('sub-name').value = sub.name || '';
+    document.getElementById('sub-code').value = sub.code || '';
     document.getElementById('sub-start').value = sub.start || '';
     document.getElementById('sub-end').value = sub.end || '';
     document.getElementById('sub-days').value = sub.days || '';
@@ -1830,6 +1942,7 @@ function saveSubject() {
 
   let sub = {
     name: name,
+    code: document.getElementById('sub-code').value,
     start: document.getElementById('sub-start').value,
     end: document.getElementById('sub-end').value,
     days: document.getElementById('sub-days').value,
@@ -1842,7 +1955,7 @@ function saveSubject() {
   if(editSubjectIndex >= 0) studySubjects[editSubjectIndex] = sub;
   else studySubjects.push(sub);
 
-  persistAll(); renderSubjects(); updatePomodoroSubjectList(); closeSubjectModal();
+  persistAll(); renderSubjects(); updatePomodoroSubjectList(); closeSubjectModal(); renderScheduleGrids();
   if(document.getElementById('screen-home').classList.contains('active')) {
     renderHomeSubjects();
     renderHomeAbsencesRanking();
@@ -2024,7 +2137,7 @@ function calcCycles(){
   const base=new Date(),sb=new Date(base);sb.setHours(sh,sm,0,0);const fa=new Date(sb.getTime()+sleepDelay*60000);const wl=new Date(base);wl.setHours(wh,wm,0,0);
   if(wl<=fa)wl.setDate(wl.getDate()+1);
   const res=[];
-  for(let c=2;c<=7;c++){const wt=new Date(fa.getTime()+c*90*60000);if(wt<=wl){const tot=c*90;res.push({c,lbl:pad(wt.getHours())+':'+pad(wt.getMinutes()),dur:Math.floor(tot/60)+'h'+(tot%60>0?' '+tot%60+'min':'')+'·'+c+' ciclo'+(c>1?'s':''),q:c>=5?'best':c>=4?'ok':'min'});}}
+  for(let c=2;c<=7;c++){const wt=new Date(fa.getTime()+c*90*60000);if(wt<=wl){const tot=c*90;res.push({c,lbl:pad(wt.getHours())+pad(wt.getMinutes()),dur:Math.floor(tot/60)+'h'+(tot%60>0?' '+tot%60+'min':'')+'·'+c+' ciclo'+(c>1?'s':''),q:c>=5?'best':c>=4?'ok':'min'});}}
   const con=document.getElementById('cycles-res');con.classList.add('vis');res.sort((a,b)=>b.c-a.c);
   if(res.length===0){con.innerHTML='<div class="sinfo"><span style="font-size:13px;">⚠️</span><span>Nenhum ciclo cabe. Ajuste o horário.</span></div>';return;}
   con.innerHTML='<div class="slabel" style="margin-top:8px;">⭐ Melhores horários</div>';
@@ -2041,7 +2154,7 @@ function dayKey(){const d=new Date();return d.getFullYear()+'-'+d.getMonth()+'-'
 function checkInsulin(){
   const btn=document.getElementById('db-check-card');if(btn&&btn.classList.contains('done'))return;
   const now=new Date();
-  iLog.unshift({date:globalDateStr,time:pad(now.getHours())+':'+pad(now.getMinutes()),key:dayKey(),ts:now.getTime()});
+  iLog.unshift({date:getSafeDate(now),time:pad(now.getHours())+':'+pad(now.getMinutes()),key:dayKey(),ts:now.getTime()});
   if(iLog.length>90)iLog.pop();persistAll();updateAllData();showToast('t-save','💊 Check Salvo!');
 }
 function updateIState(){
