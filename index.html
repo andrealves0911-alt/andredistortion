@@ -820,7 +820,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <div class="sitem" onclick="clearAllData()"><div class="si" style="color:var(--red);">🗑️</div><div class="stx"><div class="sl" style="color:var(--red);">Apagar tudo</div><div class="ss">Remoção irreversível</div></div></div>
       <input type="file" id="import-file" style="display:none;" accept=".txt" onchange="importBackup(event)">
     </div>
-    <div style="text-align:center;padding:24px 0;color:var(--text-d);font-size:11px;">andredistortion's life v21.0 · Firebase Sync</div>
+    <div style="text-align:center;padding:24px 0;color:var(--text-d);font-size:11px;">andredistortion's life v23.0 · Firebase Sync</div>
   </div>
 </div>
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
@@ -954,8 +954,13 @@ let globalDateStr = getSafeDate(new Date());
 
 let ginput='',selMeal='',sleepDelay=15,insulinAlarmType='normal';
 let basalDose = localStorage.getItem('v_basal_dose') || '0';
+
 let gReadings=JSON.parse(localStorage.getItem('v_glucose')||'[]');
+if(!Array.isArray(gReadings)) gReadings = []; // Blindagem
+
 let iLog=JSON.parse(localStorage.getItem('v_insulin')||'[]');
+if(!Array.isArray(iLog)) iLog = [];
+
 let iAlarm=JSON.parse(localStorage.getItem('v_ialarm')||'{"time":"22:00","type":"normal"}');
 let curTheme=localStorage.getItem('v_theme')||'dark';
 let currentTIRMode='daily';
@@ -964,9 +969,15 @@ let wCalDate=new Date(),wSelectedDateStr=globalDateStr;
 let wProfiles={};
 let rawProf=JSON.parse(localStorage.getItem('v_workout_profiles')||'{}');
 for(let k in rawProf)wProfiles[safeKey(k)]=rawProf[k];
+
 let wLog={};
 let wLogRaw=JSON.parse(localStorage.getItem('v_workout_log')||'{}');
-for(let k in wLogRaw){let sk=safeKey(k);wLog[sk]=Array.isArray(wLogRaw[k])?{exercises:wLogRaw[k]}:wLogRaw[k];if(wLog[sk].creatine)delete wLog[sk].creatine;}
+for(let k in wLogRaw){
+  let sk=safeKey(k);
+  wLog[sk]=Array.isArray(wLogRaw[k])?{exercises:wLogRaw[k]}:wLogRaw[k];
+  if(wLog[sk].creatine)delete wLog[sk].creatine;
+}
+
 let clCalDate=new Date(),clSelectedDateStr=globalDateStr;
 let clCustom=JSON.parse(localStorage.getItem('v_cl_custom')||'["Beber 2L de Água"]').map(safeKey);
 let clLog={};
@@ -976,19 +987,33 @@ for(let k in rawCl){let sk=safeKey(k);clLog[sk]={};for(let sub in rawCl[k])clLog
 let defaultDietGoal=parseInt(localStorage.getItem('v_diet_goal')||'4000');
 let dLog={};
 let rawD=JSON.parse(localStorage.getItem('v_diet_log')||'{}');
-for(let k in rawD)dLog[safeKey(k)]=rawD[k];
+for(let k in rawD) {
+  let val = rawD[k];
+  if(val && !Array.isArray(val.items)) val.items = []; // Blindagem de objeto vazio no Firebase
+  dLog[safeKey(k)]=val;
+}
 
 let defaultProtGoal=parseInt(localStorage.getItem('v_prot_goal')||'150');
 let protLog={};
 let rawP=JSON.parse(localStorage.getItem('v_prot_log')||'{}');
-for(let k in rawP)protLog[safeKey(k)]=rawP[k];
+for(let k in rawP) {
+  let val = rawP[k];
+  if(val && !Array.isArray(val.items)) val.items = []; // Blindagem
+  protLog[safeKey(k)]=val;
+}
 
 let weightLog=JSON.parse(localStorage.getItem('v_weight_log')||'[]');
+if(!Array.isArray(weightLog)) weightLog = [];
+
 let loadHistory=JSON.parse(localStorage.getItem('v_load_history')||'{}');
 
 // Estudos e Pomodoro
 let studySubjects=JSON.parse(localStorage.getItem('v_study_subjects')||'[]');
+if(!Array.isArray(studySubjects)) studySubjects = [];
+
 let pomodoroLog=JSON.parse(localStorage.getItem('v_pomodoro_log')||'[]');
+if(!Array.isArray(pomodoroLog)) pomodoroLog = [];
+
 let pomoInterval=null;
 let pomoTime=1500; 
 let isPomoRunning=false;
@@ -1008,36 +1033,78 @@ function showSync(state,text){
   el.className='sync-indicator show '+state;txt.textContent=text;
   if(state==='ok'||state==='err')setTimeout(()=>el.classList.remove('show'),2500);
 }
+
+function ensureArray(val) {
+  if (!val) return [];
+  if (Array.isArray(val)) return val;
+  if (typeof val === 'object') return Object.values(val);
+  return [];
+}
+
 function buildState(){
   return{
-    v_notes:userNotes, v_basal_dose:basalDose, v_glucose:gReadings,v_insulin:iLog,v_ialarm:iAlarm,v_theme:curTheme,
+    v_notes:userNotes, 
+    v_basal_dose:basalDose,
+    v_glucose:gReadings,v_insulin:iLog,v_ialarm:iAlarm,v_theme:curTheme,
     v_workout_log:wLog,v_workout_profiles:wProfiles,v_cl_custom:clCustom,v_cl_log:clLog,
     v_diet_log:dLog,v_diet_goal:defaultDietGoal, v_prot_log:protLog, v_prot_goal:defaultProtGoal, 
-    v_weight_log:weightLog,v_load_history:loadHistory, v_study_subjects:studySubjects, v_pomodoro_log:pomodoroLog, 
+    v_weight_log:weightLog,v_load_history:loadHistory, 
+    v_study_subjects:studySubjects, v_pomodoro_log:pomodoroLog, 
     _updated:Date.now()
   };
 }
+
 function applyState(data){
   if(!data)return;
   if(data.v_notes) userNotes=data.v_notes;
   if(data.v_basal_dose) basalDose=data.v_basal_dose;
-  if(data.v_glucose)gReadings=data.v_glucose;
-  if(data.v_insulin)iLog=data.v_insulin;
+  if(data.v_glucose) gReadings = ensureArray(data.v_glucose);
+  if(data.v_insulin) iLog = ensureArray(data.v_insulin);
   if(data.v_ialarm)iAlarm=data.v_ialarm;
   if(data.v_theme)curTheme=data.v_theme;
-  if(data.v_workout_log){let raw=data.v_workout_log;wLog={};for(let k in raw){let e=Array.isArray(raw[k])?{exercises:raw[k]}:raw[k];if(e.creatine)delete e.creatine;wLog[safeKey(k)]=e;}}
+  
+  if(data.v_workout_log){
+    let raw=data.v_workout_log;wLog={};
+    for(let k in raw){
+      let e=Array.isArray(raw[k])?{exercises:raw[k]}:raw[k];
+      if(e.creatine)delete e.creatine;
+      if(e && !Array.isArray(e.exercises)) e.exercises = []; // Blindagem
+      wLog[safeKey(k)]=e;
+    }
+  }
+  
   if(data.v_workout_profiles){let raw=data.v_workout_profiles;wProfiles={};for(let k in raw)wProfiles[safeKey(k)]=raw[k];}
-  if(data.v_cl_custom)clCustom=data.v_cl_custom.map(safeKey);
+  if(data.v_cl_custom)clCustom = ensureArray(data.v_cl_custom).map(safeKey);
+  
   if(data.v_cl_log){let raw=data.v_cl_log;clLog={};for(let k in raw){let sk=safeKey(k);clLog[sk]={};for(let j in raw[k])clLog[sk][safeKey(j)]=raw[k][j];}}
-  if(data.v_diet_log){let raw=data.v_diet_log;dLog={};for(let k in raw)dLog[safeKey(k)]=raw[k];}
+  
+  if(data.v_diet_log){
+    let raw=data.v_diet_log;dLog={};
+    for(let k in raw) {
+      let val = raw[k];
+      if(val && !Array.isArray(val.items)) val.items = []; // Blindagem
+      dLog[safeKey(k)]=val;
+    }
+  }
   if(data.v_diet_goal)defaultDietGoal=parseInt(data.v_diet_goal);
-  if(data.v_prot_log){let raw=data.v_prot_log;protLog={};for(let k in raw)protLog[safeKey(k)]=raw[k];}
+  
+  if(data.v_prot_log){
+    let raw=data.v_prot_log;protLog={};
+    for(let k in raw) {
+      let val = raw[k];
+      if(val && !Array.isArray(val.items)) val.items = []; // Blindagem
+      protLog[safeKey(k)]=val;
+    }
+  }
   if(data.v_prot_goal)defaultProtGoal=parseInt(data.v_prot_goal);
-  if(data.v_weight_log)weightLog=data.v_weight_log;
-  if(data.v_load_history)loadHistory=data.v_load_history;
-  if(data.v_study_subjects)studySubjects=data.v_study_subjects;
-  if(data.v_pomodoro_log)pomodoroLog=data.v_pomodoro_log;
+  
+  if(data.v_weight_log) weightLog = ensureArray(data.v_weight_log);
+  if(data.v_load_history) loadHistory = data.v_load_history;
+  
+  if(data.v_study_subjects) studySubjects = ensureArray(data.v_study_subjects);
+  if(data.v_pomodoro_log) pomodoroLog = ensureArray(data.v_pomodoro_log);
 }
+
 function saveLocalState(){
   localStorage.setItem('v_notes', userNotes);
   localStorage.setItem('v_basal_dose', basalDose);
@@ -1058,6 +1125,7 @@ function saveLocalState(){
   localStorage.setItem('v_study_subjects',JSON.stringify(studySubjects));
   localStorage.setItem('v_pomodoro_log',JSON.stringify(pomodoroLog));
 }
+
 function persistAll(){saveLocalState();scheduleSync();}
 function scheduleSync(){
   clearTimeout(syncDebounceTimer);
@@ -1067,11 +1135,13 @@ function scheduleSync(){
     catch(e){showSync('err','Erro ao salvar');}
   },SYNC_DELAY);
 }
+
 async function forceSyncToCloud(){
   clearTimeout(syncDebounceTimer);showSync('syncing','Forçando…');
   try{const s=buildState();lastLocalUpdate=s._updated;await dbRef.set(s);showSync('ok','Salvo ✓');showToast('t-save','Forçado para nuvem!');}
   catch(e){showSync('err','Erro ao salvar');}
 }
+
 async function forceLoadFromCloud(){
   showSync('syncing','Buscando…');
   try{
@@ -1080,6 +1150,7 @@ async function forceLoadFromCloud(){
     else showSync('err','Sem dados');
   }catch(e){showSync('err','Erro ao buscar');}
 }
+
 dbRef.on('value',(snap)=>{
   const data=snap.val();
   if(data&&data._updated&&data._updated>lastLocalUpdate+1500){applyState(data);saveLocalState();refreshUI();showSync('ok','Sincronizado ✓');lastLocalUpdate=data._updated;}
@@ -1093,22 +1164,7 @@ dbRef.on('value',(snap)=>{
 }
 
 // ═══════════════════════════════════════════════════════════
-// SEED INICIAL DA GRADE (CADASTRO AUTOMÁTICO SE VAZIO)
-// ═══════════════════════════════════════════════════════════
-if(!studySubjects || studySubjects.length === 0) {
-  studySubjects = [
-    {name: "FÍSICA IV PARA EE", code: "TE320 NA", room: "PK-03", absencesLimit: 10, absencesCount: 0, exams:[], schedules: [{day:'Seg', time:'18:30 - 20:30'}, {day:'Qua', time:'20:30 - 22:30'}], days: "Seg, Qua"},
-    {name: "SINAIS E SISTEMAS", code: "TE322 NA", room: "PK-01", absencesLimit: 10, absencesCount: 0, exams:[], schedules: [{day:'Seg', time:'20:30 - 22:30'}, {day:'Qua', time:'18:30 - 20:30'}], days: "Seg, Qua"},
-    {name: "FENÔMENO DE TRANSPORTE", code: "TH063 ELTDA", room: "", absencesLimit: 10, absencesCount: 0, exams:[], schedules: [{day:'Ter', time:'15:30 - 17:30'}, {day:'Qui', time:'15:30 - 17:30'}], days: "Ter, Qui"},
-    {name: "EQUAÇÕES DIFERENCIAIS", code: "TE315 NA", room: "PK-03", absencesLimit: 10, absencesCount: 0, exams:[], schedules: [{day:'Ter', time:'18:30 - 20:30'}, {day:'Qui', time:'20:30 - 22:30'}], days: "Ter, Qui"},
-    {name: "ADMINISTRAÇÃO DE EMP.", code: "TE345 NA", room: "PK-07", absencesLimit: 14, absencesCount: 12, exams:[], schedules: [{day:'Ter', time:'20:30 - 22:30'}, {day:'Sex', time:'18:30 - 20:30'}], days: "Ter, Sex"},
-    {name: "LAB DE CONVERSÃO", code: "TE325 NA", room: "PK-12", absencesLimit: 3, absencesCount: 2, exams:[], schedules: [{day:'Qui', time:'18:30 - 20:30'}], days: "Qui"}
-  ];
-  localStorage.setItem('v_study_subjects', JSON.stringify(studySubjects));
-}
-
-// ═══════════════════════════════════════════════════════════
-// INIT
+// INIT E GLOBAIS
 // ═══════════════════════════════════════════════════════════
 function startOffline(){
   document.getElementById('loading-overlay').classList.add('hidden');
@@ -1125,7 +1181,7 @@ async function init(){
   document.getElementById('diet-time').value=pad(now.getHours())+':'+pad(now.getMinutes());
   document.getElementById('prot-time').value=pad(now.getHours())+':'+pad(now.getMinutes());
   setAType(iAlarm.type,null,true);
-  updatePomoInput(); // Init pomodoro display
+  updatePomoInput();
   
   const offlineTimer=setTimeout(()=>{
     const ob=document.getElementById('btn-offline');
@@ -1207,7 +1263,7 @@ function updateHomeWidgets(){
   document.getElementById('wm-fill-c').style.width=clPct+'%';
   
   const dDay=dLog[todayStr]||{goal:defaultDietGoal,items:[]};
-  let totalKcal=dDay.items.reduce((s,it)=>s+parseInt(it.kcal||0),0);
+  let totalKcal= (dDay.items||[]).reduce((s,it)=>s+parseInt(it.kcal||0),0);
   let dPct=Math.min(100,Math.round((totalKcal/dDay.goal)*100));
   document.getElementById('wm-val-d').textContent=totalKcal+' / '+dDay.goal+' ('+dPct+'%)';
   document.getElementById('wm-fill-d').style.width=dPct+'%';
@@ -1230,19 +1286,19 @@ function renderHomeChecklist(todayStr,gTir,wPct){
   html+=`<div class="hc-item hc-item-auto ${gDone?'done':''}"><div class="hc-check">${gDone?'✓':''}</div><div style="flex:1;"><div class="hc-label">💉 Glicose no alvo</div><div class="hc-sublabel">${gTir}% na faixa</div></div></div>`;
   const wDay2=wLog[todayStr];const wDone=wPct===100&&wDay2&&wDay2.exercises&&wDay2.exercises.length>0;
   html+=`<div class="hc-item hc-item-auto ${wDone?'done':''}"><div class="hc-check">${wDone?'✓':''}</div><div style="flex:1;"><div class="hc-label">💪 Treino concluído</div><div class="hc-sublabel">${wPct}% feito</div></div></div>`;
-  if(clCustom.length===0)html+=`<div class="empty-state" style="padding:10px 0;">Sem metas. <span style="color:var(--blue);cursor:pointer;" onclick="goTo('checklist')">Adicionar →</span></div>`;
+  if(!clCustom || clCustom.length===0)html+=`<div class="empty-state" style="padding:10px 0;">Sem metas. <span style="color:var(--blue);cursor:pointer;" onclick="goTo('checklist')">Adicionar →</span></div>`;
   else clCustom.slice(0,6).forEach(item=>{
     const isDone=clLog[todayStr]&&clLog[todayStr][item];
     html+=`<div class="hc-item ${isDone?'done':''}"><div class="hc-check" onclick="hcToggle('${item}')">${isDone?'✓':''}</div><div class="hc-label" style="flex:1;">${item}</div></div>`;
   });
-  if(clCustom.length>6)html+=`<div style="text-align:center;font-size:11px;font-weight:700;color:var(--blue);padding:6px 0;cursor:pointer;" onclick="goTo('checklist')">+${clCustom.length-6} mais →</div>`;
+  if(clCustom&&clCustom.length>6)html+=`<div style="text-align:center;font-size:11px;font-weight:700;color:var(--blue);padding:6px 0;cursor:pointer;" onclick="goTo('checklist')">+${clCustom.length-6} mais →</div>`;
   area.innerHTML=html;
 }
 
 function renderHomeSubjects() {
   const area = document.getElementById('home-subjects-area');
   if(!area) return;
-  if(studySubjects.length === 0) {
+  if(!studySubjects || studySubjects.length === 0) {
      area.innerHTML = '<div class="empty-state" style="padding:10px 0;">Nenhuma matéria cadastrada.</div>';
      return;
   }
@@ -1250,7 +1306,7 @@ function renderHomeSubjects() {
   studySubjects.forEach(s => {
      let roomHtml = s.room ? `<div style="font-size:10px;color:var(--text-d);margin-top:2px;">📍 ${s.room}</div>` : '';
      let timesStr = s.schedules && s.schedules.length > 0 ? s.schedules.map(sc => `${sc.day} ${sc.time}`).join(' | ') : '';
-     html += `<div class="hc-item"><div style="flex:1;"><div class="hc-label">${s.name}</div><div class="hc-sublabel" style="font-weight:800;color:var(--amber);">${timesStr}</div>${roomHtml}</div></div>`;
+     html += `<div class="hc-item"><div style="flex:1;"><div class="hc-label">${s.name||'Materia'}</div><div class="hc-sublabel" style="font-weight:800;color:var(--amber);">${timesStr}</div>${roomHtml}</div></div>`;
   });
   area.innerHTML = html;
 }
@@ -1258,7 +1314,7 @@ function renderHomeSubjects() {
 function renderHomeAbsencesRanking() {
   const area = document.getElementById('home-absences-area');
   if(!area) return;
-  if(studySubjects.length === 0) {
+  if(!studySubjects || studySubjects.length === 0) {
      area.innerHTML = '<div class="empty-state" style="padding:10px 0;">Nenhuma matéria cadastrada.</div>';
      return;
   }
@@ -1419,7 +1475,7 @@ function updateCLMetrics(){
   document.getElementById('cl-val-g').textContent=gTir+'%';document.getElementById('cl-fill-g').style.width=gTir+'%';
   const wd=wLog[ds];let wPct=0;if(wd&&wd.exercises&&wd.exercises.length>0){let done=wd.exercises.filter(ex=>ex.done).length;wPct=Math.round((done/wd.exercises.length)*100);}
   document.getElementById('cl-val-w').textContent=wPct+'%';document.getElementById('cl-fill-w').style.width=wPct+'%';
-  const dd=dLog[ds]||{goal:defaultDietGoal,items:[]};let kcal=dd.items.reduce((s,it)=>s+parseInt(it.kcal||0),0);let dPct=Math.min(100,Math.round((kcal/dd.goal)*100));
+  const dd=dLog[ds]||{goal:defaultDietGoal,items:[]};let kcal=(dd.items||[]).reduce((s,it)=>s+parseInt(it.kcal||0),0);let dPct=Math.min(100,Math.round((kcal/dd.goal)*100));
   document.getElementById('cl-val-d').textContent=dPct+'%';document.getElementById('cl-fill-d').style.width=dPct+'%';
   let clT=clCustom.length,clD=0;if(clLog[ds])clCustom.forEach(it=>{if(clLog[ds][it])clD++;});let clPct=clT===0?0:Math.round((clD/clT)*100);
   document.getElementById('cl-val-c').textContent=clPct+'%';document.getElementById('cl-fill-c').style.width=clPct+'%';
@@ -1443,32 +1499,40 @@ function addCLItem(){const item=prompt("Novo item permanente:");if(item&&item.tr
 function removeCLItem(idx){if(!confirm('Remover item?'))return;clCustom.splice(idx,1);persistAll();renderCLData();}
 
 // ═══════════════════════════════════════════════════════════
-// DIETA E PROTEÍNAS
+// DIETA E PROTEÍNAS (COM BLINDAGEM DE ARRAYS)
 // ═══════════════════════════════════════════════════════════
 function renderDietData(){
   const dd=dLog[wSelectedDateStr]||{goal:defaultDietGoal,items:[]};
-  let kcal=dd.items.reduce((s,it)=>s+parseInt(it.kcal||0),0);let pct=Math.min(100,Math.round((kcal/dd.goal)*100));
+  let kcal=(dd.items||[]).reduce((s,it)=>s+parseInt(it.kcal||0),0);let pct=Math.min(100,Math.round((kcal/dd.goal)*100));
   document.getElementById('diet-total').textContent=kcal;document.getElementById('diet-goal').textContent=dd.goal;
   document.getElementById('diet-pct').textContent=pct+'%';document.getElementById('diet-fill').style.width=pct+'%';
   const list=document.getElementById('diet-list-area');
-  list.innerHTML=dd.items.length===0?'<div class="empty-state" style="padding:8px;">Nenhuma refeição.</div>':dd.items.map((m,i)=>`<div class="diet-item"><div><div style="font-weight:800;color:var(--text);font-size:13px;">${m.meal}</div><div style="font-size:9px;color:var(--text-m);font-weight:700;">${m.time}</div></div><div style="display:flex;align-items:center;gap:10px;"><div style="font-weight:800;color:var(--amber);font-size:13px;">${m.kcal} kcal</div><div class="del-btn" style="padding:0;" onclick="delMeal(${i})">✕</div></div></div>`).join('');
+  list.innerHTML=(!dd.items||dd.items.length===0)?'<div class="empty-state" style="padding:8px;">Nenhuma refeição.</div>':dd.items.map((m,i)=>`<div class="diet-item"><div><div style="font-weight:800;color:var(--text);font-size:13px;">${m.meal}</div><div style="font-size:9px;color:var(--text-m);font-weight:700;">${m.time}</div></div><div style="display:flex;align-items:center;gap:10px;"><div style="font-weight:800;color:var(--amber);font-size:13px;">${m.kcal} kcal</div><div class="del-btn" style="padding:0;" onclick="delMeal(${i})">✕</div></div></div>`).join('');
 }
-function addMeal(){const meal=document.getElementById('diet-meal').value,kcal=document.getElementById('diet-kcal').value,time=document.getElementById('diet-time').value;if(!meal||!kcal||!time)return showToast('t-save','Preencha todos os campos!');if(!dLog[wSelectedDateStr])dLog[wSelectedDateStr]={goal:defaultDietGoal,items:[]};dLog[wSelectedDateStr].items.unshift({meal:safeKey(meal),kcal,time});persistAll();document.getElementById('diet-meal').value='';document.getElementById('diet-kcal').value='';renderDietData();showToast('t-save','Refeição Salva!');}
+function addMeal(){
+  const meal=document.getElementById('diet-meal').value,kcal=document.getElementById('diet-kcal').value,time=document.getElementById('diet-time').value;
+  if(!meal||!kcal||!time)return showToast('t-save','Preencha todos os campos!');
+  if(!dLog[wSelectedDateStr])dLog[wSelectedDateStr]={goal:defaultDietGoal,items:[]};
+  if(!dLog[wSelectedDateStr].items) dLog[wSelectedDateStr].items=[]; 
+  dLog[wSelectedDateStr].items.unshift({meal:safeKey(meal),kcal,time});
+  persistAll();document.getElementById('diet-meal').value='';document.getElementById('diet-kcal').value='';renderDietData();showToast('t-save','Refeição Salva!');
+}
 function delMeal(i){if(!confirm('Apagar refeição?'))return;dLog[wSelectedDateStr].items.splice(i,1);persistAll();renderDietData();}
 function editGoal(){const g=prompt("Meta de calorias:",dLog[wSelectedDateStr]?.goal||defaultDietGoal);if(g&&!isNaN(g)){if(!dLog[wSelectedDateStr])dLog[wSelectedDateStr]={goal:parseInt(g),items:[]};else dLog[wSelectedDateStr].goal=parseInt(g);defaultDietGoal=parseInt(g);persistAll();renderDietData();}}
 
 function renderProtData(){
   const pp=protLog[wSelectedDateStr]||{goal:defaultProtGoal,items:[]};
-  let qty=pp.items.reduce((s,it)=>s+parseInt(it.qty||0),0);let pct=Math.min(100,Math.round((qty/pp.goal)*100));
+  let qty=(pp.items||[]).reduce((s,it)=>s+parseInt(it.qty||0),0);let pct=Math.min(100,Math.round((qty/pp.goal)*100));
   document.getElementById('prot-total').textContent=qty;document.getElementById('prot-goal').textContent=pp.goal;
   document.getElementById('prot-pct').textContent=pct+'%';document.getElementById('prot-fill').style.width=pct+'%';
   const list=document.getElementById('prot-list-area');
-  list.innerHTML=pp.items.length===0?'<div class="empty-state" style="padding:8px;">Nenhum registro.</div>':pp.items.map((m,i)=>`<div class="diet-item"><div><div style="font-weight:800;color:var(--text);font-size:13px;">${m.meal}</div><div style="font-size:9px;color:var(--text-m);font-weight:700;">${m.time||'--:--'}</div></div><div style="display:flex;align-items:center;gap:10px;"><div style="font-weight:800;color:var(--teal);font-size:13px;">${m.qty} g</div><div class="del-btn" style="padding:0;" onclick="delProtein(${i})">✕</div></div></div>`).join('');
+  list.innerHTML=(!pp.items||pp.items.length===0)?'<div class="empty-state" style="padding:8px;">Nenhum registro.</div>':pp.items.map((m,i)=>`<div class="diet-item"><div><div style="font-weight:800;color:var(--text);font-size:13px;">${m.meal}</div><div style="font-size:9px;color:var(--text-m);font-weight:700;">${m.time||'--:--'}</div></div><div style="display:flex;align-items:center;gap:10px;"><div style="font-weight:800;color:var(--teal);font-size:13px;">${m.qty} g</div><div class="del-btn" style="padding:0;" onclick="delProtein(${i})">✕</div></div></div>`).join('');
 }
 function addProtein(){
   const meal=document.getElementById('prot-meal').value,qty=document.getElementById('prot-qty').value,time=document.getElementById('prot-time').value;
   if(!meal||!qty||!time)return showToast('t-save','Preencha todos os campos!');
   if(!protLog[wSelectedDateStr])protLog[wSelectedDateStr]={goal:defaultProtGoal,items:[]};
+  if(!protLog[wSelectedDateStr].items) protLog[wSelectedDateStr].items=[]; 
   protLog[wSelectedDateStr].items.unshift({meal:safeKey(meal),qty,time});
   persistAll();document.getElementById('prot-meal').value='';document.getElementById('prot-qty').value='';
   renderProtData();showToast('t-save','Proteína Salva!');
@@ -1584,7 +1648,6 @@ function addWEx(){
 }
 function delWEx(i){if(!confirm('Remover exercício?'))return;wLog[wSelectedDateStr].exercises.splice(i,1);persistAll();renderWData();}
 
-// GRÁFICOS DE CARGA E PESO
 function renderLoadChart(){
   const sel=document.getElementById('load-chart-exercise');if(!sel)return;
   const key=sel.value;
@@ -1722,13 +1785,13 @@ function saveEditDate(){
 function gcHex(v){return v<70?'#ffb347':v<=139?'#4ade80':v<=199?'#ffb347':'#ff6b6b';}
 function renderTable(){
   const tb=document.getElementById('gtable-body');
-  if(gReadings.length===0){tb.innerHTML='<tr><td colspan="5" style="text-align:center;padding:12px;color:var(--text-d);">Vazio</td></tr>';return;}
+  if(!gReadings || gReadings.length===0){tb.innerHTML='<tr><td colspan="5" style="text-align:center;padding:12px;color:var(--text-d);">Vazio</td></tr>';return;}
   tb.innerHTML=gReadings.map((r,i)=>{
     const h=gcHex(r.value);const tag=r.meal==='Sem Tag'?'':`#${r.meal.toLowerCase().replace(/ /g,'-')}`;
     return `<tr><td>${r.date.slice(0,5)}</td><td>${r.time}</td><td><span class="vchip" style="background:${h}22;color:${h};border:1px solid ${h}55;">${r.value}</span></td><td style="color:var(--blue);font-size:10px;font-weight:700;">${tag}</td><td style="text-align:right;"><span class="edit-btn" onclick="openEditDate(${i})">✎</span><span class="del-btn" onclick="delReading(${i})">✕</span></td></tr>`;
   }).join('');
 }
-function calcHba1c(){if(gReadings.length<3)return null;const avg=gReadings.reduce((a,b)=>a+b.value,0)/gReadings.length;return(avg+46.7)/28.7;}
+function calcHba1c(){if(!gReadings||gReadings.length<3)return null;const avg=gReadings.reduce((a,b)=>a+b.value,0)/gReadings.length;return(avg+46.7)/28.7;}
 function updateHbA1c(){
   const v=calcHba1c(),el=document.getElementById('hba1c-val');
   if(!v){if(el)el.textContent='—';return;}
@@ -1830,7 +1893,7 @@ function editBasalDose(e) {
 function renderSubjects() {
   const list = document.getElementById('study-subjects-list');
   if(!list) return;
-  if(studySubjects.length===0){
+  if(!studySubjects || studySubjects.length===0){
     list.innerHTML='<div class="empty-state">Nenhuma matéria cadastrada.</div>';
     return;
   }
