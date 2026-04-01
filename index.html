@@ -120,7 +120,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .mc-desc{font-size:9px;font-weight:600;color:var(--text-m);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mc-orb{position:absolute;border-radius:50%;filter:blur(30px);pointer-events:none;width:80px;height:80px;top:-10px;right:-10px;opacity:0.3;}
 
-/* GRADE HORÁRIA WIDGET (HOME) */
+/* GRADE HORÁRIA WIDGET */
 .sched-widget{background:var(--glass);border:1px solid var(--glass-b);border-radius:22px;padding:18px;margin-bottom:14px;backdrop-filter:blur(16px);overflow-x:auto;}
 .sched-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
 .sched-badge{background:#63839c;color:#fff;font-size:10px;font-weight:800;padding:4px 8px;border-radius:6px;text-transform:uppercase;}
@@ -353,9 +353,18 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .grade-y{color:var(--amber);font-weight:800;}
 .grade-r{color:var(--red);font-weight:800;}
 .pomodoro-wrap{display:flex;flex-direction:column;align-items:center;padding:20px;background:var(--glass);border:1px solid var(--glass-b);border-radius:var(--radius);margin-bottom:14px;}
-.pomodoro-time{font-size:48px;font-weight:800;letter-spacing:-2px;margin:10px 0;}
 
-/* NOVOS BOTÕES ESTUDO */
+/* NOVOS BOTÕES ESTUDO E INPUT DE POMODORO */
+.pomo-timer-row { display:flex; align-items:center; justify-content:center; font-size:56px; font-weight:800; letter-spacing:-2px; margin:10px 0; color:var(--text); }
+.pomo-in { background:transparent; border:none; color:var(--text); font-size:56px; font-weight:800; font-family:inherit; width:85px; text-align:right; outline:none; padding:0; transition:0.2s;}
+.pomo-in:focus { color:var(--amber); }
+.pomo-in::-webkit-outer-spin-button, .pomo-in::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.pomo-in[type=number] { -moz-appearance: textfield; }
+
+.sched-row { display:flex; align-items:center; gap:10px; margin-bottom:6px; background:var(--surface-h); padding:8px 12px; border-radius:8px;}
+.sched-row label { font-size:12px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:8px; cursor:pointer; flex:1;}
+.sched-sel { background:var(--input-bg); border:1px solid var(--glass-b); color:var(--text); border-radius:6px; padding:4px 8px; font-size:11px; outline:none; font-family:inherit;}
+
 .btn-new-modern {background:rgba(255,179,71,.1); color:var(--amber); border:1px solid rgba(255,179,71,.3); padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer; transition:all 0.2s;}
 .btn-new-modern:active {background:rgba(255,179,71,.2);}
 .edit-btn-modern {width:28px; height:28px; background:var(--surface-h); border:1px solid var(--glass-b); border-radius:8px; display:flex; justify-content:center; align-items:center; font-size:12px; color:var(--text-m); cursor:pointer; transition:0.2s;}
@@ -681,27 +690,22 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div class="screen-header"><div class="screen-title">Estudos & Foco</div></div>
   <div class="scontent">
 
-    <div class="sched-widget" style="margin-bottom:20px;">
-      <div class="sched-header">
-        <span style="font-size:14px;font-weight:800;color:var(--text);">📅 Grade Horária</span>
-        <span class="sched-badge">1º Semestre</span>
-      </div>
-      <div id="study-schedule-grid">
-        <div class="empty-state">Carregando grade...</div>
-      </div>
-    </div>
-    
     <div class="study-layout">
       <div>
-        <div class="slabel">🍅 Pomodoro Timer</div>
+        <div class="slabel">🍅 Foco (Editável)</div>
         <div class="pomodoro-wrap">
           <select id="pomodoro-subject" style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:9px;color:var(--text);font-size:12px;font-weight:700;font-family:inherit;padding:10px;outline:none;margin-bottom:10px;">
             <option value="Livre">Modo Livre</option>
           </select>
-          <div class="pomodoro-time" id="pomodoro-display">25:00</div>
+          
+          <div class="pomo-timer-row">
+            <input type="number" id="pomo-min-input" class="pomo-in" value="25" min="1" max="180" onchange="updatePomoInput()">
+            <span id="pomo-sec-display" style="width:85px;text-align:left;">:00</span>
+          </div>
+
           <div style="display:flex;gap:10px;width:100%;">
             <button class="btn-primary" id="btn-pomodoro-start" style="flex:1;background:var(--amber);" onclick="startPomodoro()">▶ Iniciar</button>
-            <button class="btn-secondary" style="flex:1;" onclick="resetPomodoro()">⏹ Reset</button>
+            <button class="btn-secondary" style="flex:1; color:var(--teal); border-color:var(--teal);" onclick="saveAndResetPomodoro()">💾 Salvar/Reset</button>
           </div>
         </div>
       </div>
@@ -816,7 +820,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <div class="sitem" onclick="clearAllData()"><div class="si" style="color:var(--red);">🗑️</div><div class="stx"><div class="sl" style="color:var(--red);">Apagar tudo</div><div class="ss">Remoção irreversível</div></div></div>
       <input type="file" id="import-file" style="display:none;" accept=".txt" onchange="importBackup(event)">
     </div>
-    <div style="text-align:center;padding:24px 0;color:var(--text-d);font-size:11px;">andredistortion's life v20.0 · Firebase Sync</div>
+    <div style="text-align:center;padding:24px 0;color:var(--text-d);font-size:11px;">andredistortion's life v21.0 · Firebase Sync</div>
   </div>
 </div>
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
@@ -900,17 +904,20 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <input type="text" id="sub-name" placeholder="Nome da Matéria (Ex: Física IV)" style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px;outline:none;font-family:inherit;">
       
       <input type="text" id="sub-code" placeholder="Código da Turma (Ex: TE320 NA)" style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px;outline:none;font-family:inherit;">
-
-      <div style="display:flex;gap:10px;">
-        <div style="flex:1"><label style="font-size:10px;color:var(--text-m);">Início</label><input type="time" id="sub-start" style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px;outline:none;font-family:inherit;"></div>
-        <div style="flex:1"><label style="font-size:10px;color:var(--text-m);">Fim</label><input type="time" id="sub-end" style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px;outline:none;font-family:inherit;"></div>
-      </div>
-      
-      <input type="text" id="sub-days" placeholder="Dias (Ex: Seg, Ter, Qua)" style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px;outline:none;font-family:inherit;">
-      
       <input type="text" id="sub-room" placeholder="Sala / Local (Ex: PK-03)" style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px;outline:none;font-family:inherit;">
       
-      <div style="display:flex;gap:10px;align-items:center;">
+      <div style="font-size:11px;color:var(--text-m);font-weight:700;margin-top:4px;">Dias de Aula:</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;" id="sub-days-pills">
+        <div class="pill" id="pill-Seg" onclick="toggleSubDay('Seg')">Seg</div>
+        <div class="pill" id="pill-Ter" onclick="toggleSubDay('Ter')">Ter</div>
+        <div class="pill" id="pill-Qua" onclick="toggleSubDay('Qua')">Qua</div>
+        <div class="pill" id="pill-Qui" onclick="toggleSubDay('Qui')">Qui</div>
+        <div class="pill" id="pill-Sex" onclick="toggleSubDay('Sex')">Sex</div>
+      </div>
+      
+      <div id="sub-times-container" style="display:flex;flex-direction:column;gap:6px;"></div>
+
+      <div style="display:flex;gap:10px;align-items:center;margin-top:8px;">
         <label style="font-size:11px;color:var(--text-m);">Qtd. Provas:</label>
         <input type="number" id="sub-exams-count" style="width:60px;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px;outline:none;text-align:center;" min="0" max="10" onchange="generateExamFields()">
       </div>
@@ -931,7 +938,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 </div>
 <script>
 // ═══════════════════════════════════════════════════════════
-// FIREBASE
+// FIREBASE E GLOBAIS
 // ═══════════════════════════════════════════════════════════
 const firebaseConfig={apiKey:"AIzaSyCUbfhVaa6JqPsSMtZKngoHTIYzQjhpAYE",authDomain:"andredistortion-40920.firebaseapp.com",databaseURL:"https://andredistortion-40920-default-rtdb.firebaseio.com",projectId:"andredistortion-40920",storageBucket:"andredistortion-40920.firebasestorage.app",messagingSenderId:"19505006527",appId:"1:19505006527:web:97f78100a7473d4cfc030a"};
 firebase.initializeApp(firebaseConfig);
@@ -942,9 +949,6 @@ const SYNC_DELAY=1200;
 function safeKey(k){return String(k).replace(/[\.\#\$\/\[\]]/g,'-');}
 function getSafeDate(d){if(!d)d=new Date();return d.toLocaleDateString('pt-BR').replace(/\//g,'-');}
 
-// ═══════════════════════════════════════════════════════════
-// ESTADO GLOBAL
-// ═══════════════════════════════════════════════════════════
 let userNotes = localStorage.getItem('v_notes') || '';
 let globalDateStr = getSafeDate(new Date());
 
@@ -986,9 +990,10 @@ let loadHistory=JSON.parse(localStorage.getItem('v_load_history')||'{}');
 let studySubjects=JSON.parse(localStorage.getItem('v_study_subjects')||'[]');
 let pomodoroLog=JSON.parse(localStorage.getItem('v_pomodoro_log')||'[]');
 let pomoInterval=null;
-let pomoTime=1500; // 25 min
+let pomoTime=1500; 
 let isPomoRunning=false;
-let studyChartDateOffset = 0; // Controle da semana do gráfico de estudos
+let studyChartDateOffset = 0; 
+let activeSubDays = []; // Dias ativos na edição da matéria
 
 let editDateIndex=-1;
 let editSubjectIndex=-1;
@@ -1005,13 +1010,10 @@ function showSync(state,text){
 }
 function buildState(){
   return{
-    v_notes:userNotes, 
-    v_basal_dose:basalDose,
-    v_glucose:gReadings,v_insulin:iLog,v_ialarm:iAlarm,v_theme:curTheme,
+    v_notes:userNotes, v_basal_dose:basalDose, v_glucose:gReadings,v_insulin:iLog,v_ialarm:iAlarm,v_theme:curTheme,
     v_workout_log:wLog,v_workout_profiles:wProfiles,v_cl_custom:clCustom,v_cl_log:clLog,
     v_diet_log:dLog,v_diet_goal:defaultDietGoal, v_prot_log:protLog, v_prot_goal:defaultProtGoal, 
-    v_weight_log:weightLog,v_load_history:loadHistory, 
-    v_study_subjects:studySubjects, v_pomodoro_log:pomodoroLog, 
+    v_weight_log:weightLog,v_load_history:loadHistory, v_study_subjects:studySubjects, v_pomodoro_log:pomodoroLog, 
     _updated:Date.now()
   };
 }
@@ -1091,26 +1093,22 @@ dbRef.on('value',(snap)=>{
 }
 
 // ═══════════════════════════════════════════════════════════
-// SEED INICIAL DA GRADE (APENAS SE ESTIVER VAZIO)
+// SEED INICIAL DA GRADE (CADASTRO AUTOMÁTICO SE VAZIO)
 // ═══════════════════════════════════════════════════════════
 if(!studySubjects || studySubjects.length === 0) {
   studySubjects = [
-    {name: "FÍSICA IV PARA EE", code: "TE320 NA", start: "18:30", end: "20:30", days: "Seg", room: "PK-03", absencesLimit: 10, absencesCount: 0, exams:[]},
-    {name: "FÍSICA IV PARA EE", code: "TE320 NA", start: "20:30", end: "22:30", days: "Qua", room: "PK-03", absencesLimit: 10, absencesCount: 0, exams:[]},
-    {name: "SINAIS E SISTEMAS", code: "TE322 NA", start: "20:30", end: "22:30", days: "Seg", room: "PK-01", absencesLimit: 10, absencesCount: 0, exams:[]},
-    {name: "SINAIS E SISTEMAS", code: "TE322 NA", start: "18:30", end: "20:30", days: "Qua", room: "PK-01", absencesLimit: 10, absencesCount: 0, exams:[]},
-    {name: "FENÔMENO DE TRANSPORTE", code: "TH063 ELTDA", start: "15:30", end: "17:30", days: "Ter, Qui", room: "", absencesLimit: 10, absencesCount: 0, exams:[]},
-    {name: "EQUAÇÕES DIFERENCIAIS", code: "TE315 NA", start: "18:30", end: "20:30", days: "Ter", room: "PK-03", absencesLimit: 10, absencesCount: 0, exams:[]},
-    {name: "EQUAÇÕES DIFERENCIAIS", code: "TE315 NA", start: "20:30", end: "22:30", days: "Qui", room: "PK-03", absencesLimit: 10, absencesCount: 0, exams:[]},
-    {name: "ADMINISTRAÇÃO DE EMP.", code: "TE345 NA", start: "20:30", end: "22:30", days: "Ter", room: "PK-07", absencesLimit: 14, absencesCount: 12, exams:[]},
-    {name: "ADMINISTRAÇÃO DE EMP.", code: "TE345 NA", start: "18:30", end: "20:30", days: "Sex", room: "PK-07", absencesLimit: 14, absencesCount: 12, exams:[]},
-    {name: "LAB DE CONVERSÃO", code: "TE325 NA", start: "18:30", end: "20:30", days: "Qui", room: "PK-12", absencesLimit: 3, absencesCount: 2, exams:[]}
+    {name: "FÍSICA IV PARA EE", code: "TE320 NA", room: "PK-03", absencesLimit: 10, absencesCount: 0, exams:[], schedules: [{day:'Seg', time:'18:30 - 20:30'}, {day:'Qua', time:'20:30 - 22:30'}], days: "Seg, Qua"},
+    {name: "SINAIS E SISTEMAS", code: "TE322 NA", room: "PK-01", absencesLimit: 10, absencesCount: 0, exams:[], schedules: [{day:'Seg', time:'20:30 - 22:30'}, {day:'Qua', time:'18:30 - 20:30'}], days: "Seg, Qua"},
+    {name: "FENÔMENO DE TRANSPORTE", code: "TH063 ELTDA", room: "", absencesLimit: 10, absencesCount: 0, exams:[], schedules: [{day:'Ter', time:'15:30 - 17:30'}, {day:'Qui', time:'15:30 - 17:30'}], days: "Ter, Qui"},
+    {name: "EQUAÇÕES DIFERENCIAIS", code: "TE315 NA", room: "PK-03", absencesLimit: 10, absencesCount: 0, exams:[], schedules: [{day:'Ter', time:'18:30 - 20:30'}, {day:'Qui', time:'20:30 - 22:30'}], days: "Ter, Qui"},
+    {name: "ADMINISTRAÇÃO DE EMP.", code: "TE345 NA", room: "PK-07", absencesLimit: 14, absencesCount: 12, exams:[], schedules: [{day:'Ter', time:'20:30 - 22:30'}, {day:'Sex', time:'18:30 - 20:30'}], days: "Ter, Sex"},
+    {name: "LAB DE CONVERSÃO", code: "TE325 NA", room: "PK-12", absencesLimit: 3, absencesCount: 2, exams:[], schedules: [{day:'Qui', time:'18:30 - 20:30'}], days: "Qui"}
   ];
   localStorage.setItem('v_study_subjects', JSON.stringify(studySubjects));
 }
 
 // ═══════════════════════════════════════════════════════════
-// INIT E ETAPA 1 A 4 (MISTO)
+// INIT
 // ═══════════════════════════════════════════════════════════
 function startOffline(){
   document.getElementById('loading-overlay').classList.add('hidden');
@@ -1127,6 +1125,7 @@ async function init(){
   document.getElementById('diet-time').value=pad(now.getHours())+':'+pad(now.getMinutes());
   document.getElementById('prot-time').value=pad(now.getHours())+':'+pad(now.getMinutes());
   setAType(iAlarm.type,null,true);
+  updatePomoInput(); // Init pomodoro display
   
   const offlineTimer=setTimeout(()=>{
     const ob=document.getElementById('btn-offline');
@@ -1185,7 +1184,7 @@ function updateAllData(){
 }
 
 // ═══════════════════════════════════════════════════════════
-// HOME WIDGETS E CLOCK
+// HOME WIDGETS
 // ═══════════════════════════════════════════════════════════
 function updateHomeWidgets(){
   const todayStr=globalDateStr;
@@ -1248,10 +1247,10 @@ function renderHomeSubjects() {
      return;
   }
   let html = '';
-  // Exibindo TODAS as matérias como solicitado
   studySubjects.forEach(s => {
      let roomHtml = s.room ? `<div style="font-size:10px;color:var(--text-d);margin-top:2px;">📍 ${s.room}</div>` : '';
-     html += `<div class="hc-item"><div style="flex:1;"><div class="hc-label">${s.name}</div><div class="hc-sublabel" style="font-weight:800;color:var(--amber);">${s.start} às ${s.end} - ${s.days}</div>${roomHtml}</div></div>`;
+     let timesStr = s.schedules && s.schedules.length > 0 ? s.schedules.map(sc => `${sc.day} ${sc.time}`).join(' | ') : '';
+     html += `<div class="hc-item"><div style="flex:1;"><div class="hc-label">${s.name}</div><div class="hc-sublabel" style="font-weight:800;color:var(--amber);">${timesStr}</div>${roomHtml}</div></div>`;
   });
   area.innerHTML = html;
 }
@@ -1266,7 +1265,7 @@ function renderHomeAbsencesRanking() {
   let ranked = [...studySubjects].sort((a,b) => {
     let pA = (a.absencesCount || 0) / (a.absencesLimit || 10);
     let pB = (b.absencesCount || 0) / (b.absencesLimit || 10);
-    return pB - pA; // Descendente por porcentagem
+    return pB - pA; 
   });
   let toShow = ranked.filter(s => (s.absencesCount || 0) > 0).slice(0, 4);
   if(toShow.length === 0) {
@@ -1290,9 +1289,9 @@ function renderHomeAbsencesRanking() {
 function renderScheduleGrids() {
   const containers = ['home-schedule-grid', 'study-schedule-grid'];
   const slots = [
-    {label: '15:30\n17:30', start:'15:30'},
-    {label: '18:30\n20:30', start:'18:30'},
-    {label: '20:30\n22:30', start:'20:30'}
+    {label: '15:30\n17:30', timeStr: '15:30 - 17:30'},
+    {label: '18:30\n20:30', timeStr: '18:30 - 20:30'},
+    {label: '20:30\n22:30', timeStr: '20:30 - 22:30'}
   ];
   const days = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'];
   
@@ -1303,12 +1302,12 @@ function renderScheduleGrids() {
   slots.forEach(slot => {
      html += `<div class="sched-cell" style="background:var(--surface); font-weight:800;">${slot.label.replace('\n','<br>')}</div>`;
      days.forEach(d => {
-        const sub = studySubjects.find(s => s.days.includes(d) && s.start === slot.start);
+        const sub = studySubjects.find(s => s.schedules && s.schedules.some(sc => sc.day === d && sc.time === slot.timeStr));
         if(sub) {
            html += `<div class="sched-block">
              <div style="font-size:10px;font-weight:900;opacity:0.9;">${sub.code||''}</div>
              <div style="margin:4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${sub.name}">${sub.name}</div>
-             <div style="color:rgba(255,255,255,0.7);font-size:8px;">${sub.start} - ${sub.end}</div>
+             <div style="color:rgba(255,255,255,0.7);font-size:8px;">${slot.timeStr}</div>
              ${sub.room ? `<div style="margin-top:2px;color:#fff;font-weight:800;font-size:9px;">📍 ${sub.room}</div>` : ''}
            </div>`;
         } else {
@@ -1436,7 +1435,7 @@ function renderCLData(){
   if(wd&&wd.exercises&&wd.exercises.length>0){let done=wd.exercises.filter(ex=>ex.done).length;let pct=Math.round((done/wd.exercises.length)*100);wText='Treino: '+pct+'% concluído';wDone=pct===100;}
   html+=`<div class="w-item cl-item ${wDone?'done':''}" style="opacity:1;background:var(--surface-h);border-color:transparent;margin-bottom:10px;"><div class="w-check" style="cursor:default;">${wDone?'✓':''}</div><div class="w-details"><span style="color:var(--text);font-size:13px;font-weight:700;">${wText}</span><span style="font-size:10px;color:var(--text-m);">Meta Automática</span></div></div>`;
   if(clCustom.length===0)html+=`<div class="empty-state">Sem metas manuais.</div>`;
-  else clCustom.forEach((item,idx)=>{let isDone=clLog[clSelectedDateStr]&&clLog[clSelectedDateStr][item];html+=`<div class="w-item cl-item ${isDone?'done':''}"><div class="w-check" onclick="toggleCLItem('${item}')">${isDone?'✓':''}</div><div class="w-details"><span style="color:var(--text);font-size:13px;font-weight:700;">${item}</span></div><div class="w-del" onclick="removeCLItem(${idx})">✕</div></div>`;});
+  else clCustom.forEach((item,idx)=>{let isDone=clLog[clSelectedDateStr]&&clLog[clSelectedDateStr][item];html+=`<div class="w-item cl-item ${isDone?'done':''}"><div class="w-check" onclick="toggleCLItem('${item}')">${isDone?'✓':''}</div><div class="w-details"><span style="color:var(--text);font-size:13px;font-weight:700;">${item}</span></div><div class="del-btn" onclick="removeCLItem(${idx})">✕</div></div>`;});
   list.innerHTML=html;updateCLMetrics();
 }
 function toggleCLItem(item){if(!clLog[clSelectedDateStr])clLog[clSelectedDateStr]={};clLog[clSelectedDateStr][item]=!clLog[clSelectedDateStr][item];persistAll();renderCLData();renderCLCalendar();}
@@ -1826,7 +1825,7 @@ function editBasalDose(e) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// ESTUDOS E POMODORO
+// ESTUDOS, POMODORO E GRADE
 // ═══════════════════════════════════════════════════════════
 function renderSubjects() {
   const list = document.getElementById('study-subjects-list');
@@ -1840,15 +1839,19 @@ function renderSubjects() {
     let absencesCount = sub.absencesCount || 0;
     let limit = sub.absencesLimit || 10;
     let limitColor = absencesCount >= limit ? 'var(--red)' : (absencesCount >= limit*0.7 ? 'var(--amber)' : 'var(--green)');
-
     let roomHtml = sub.room ? ` | 📍 ${sub.room}` : '';
+    
+    let timesStr = sub.schedules && sub.schedules.length > 0 ? sub.schedules.map(sc => `${sc.day} ${sc.time}`).join(' | ') : '';
 
     html += `<div class="study-card">
       <div style="display:flex;justify-content:space-between;align-items:center;">
-        <div style="font-size:14px;font-weight:800;color:var(--text);">${sub.name}</div>
-        <button class="edit-btn-modern" style="margin:0;" onclick="openSubjectModal(${i})">✏️</button>
+        <div style="font-size:14px;font-weight:800;color:var(--text);">${sub.name} <span style="font-size:10px;font-weight:600;color:var(--text-d);">${sub.code||''}</span></div>
+        <div style="display:flex;gap:6px;">
+          <button class="edit-btn-modern" onclick="openSubjectModal(${i})">✏️</button>
+          <button class="edit-btn-modern" style="color:var(--red);" onclick="deleteSubject(${i})">✕</button>
+        </div>
       </div>
-      <div style="font-size:11px;color:var(--text-m);font-weight:700;margin-top:4px;">🕒 ${sub.start} às ${sub.end}${roomHtml}</div>
+      <div style="font-size:11px;color:var(--text-m);font-weight:700;margin-top:6px;line-height:1.4;">${timesStr}${roomHtml}</div>
       
       <div style="margin-top:12px;display:flex;align-items:center;gap:10px;background:var(--surface-h);padding:8px;border-radius:10px;">
         <span style="font-size:11px;font-weight:800;color:var(--text);">Faltas:</span>
@@ -1883,15 +1886,46 @@ function renderSubjects() {
   list.innerHTML = html;
 }
 
+let subTimesMap = {};
+function toggleSubDay(d) {
+  if(activeSubDays.includes(d)) activeSubDays = activeSubDays.filter(x => x !== d);
+  else activeSubDays.push(d);
+  renderSubTimes();
+}
+function renderSubTimes() {
+  const p = document.getElementById('sub-days-pills');
+  if(p) {
+    ['Seg','Ter','Qua','Qui','Sex'].forEach(d => {
+      const el = document.getElementById('pill-'+d);
+      if(el) el.className = 'pill ' + (activeSubDays.includes(d) ? 'active' : '');
+    });
+  }
+  const c = document.getElementById('sub-times-container');
+  if(!c) return;
+  let html = '';
+  activeSubDays.forEach(d => {
+    let sel = subTimesMap[d] || '18:30 - 20:30';
+    html += `<div class="sched-row">
+      <label>${d}:</label>
+      <select class="sched-sel" id="time-sel-${d}" onchange="subTimesMap['${d}']=this.value">
+        <option value="15:30 - 17:30" ${sel==='15:30 - 17:30'?'selected':''}>15:30 - 17:30</option>
+        <option value="18:30 - 20:30" ${sel==='18:30 - 20:30'?'selected':''}>18:30 - 20:30</option>
+        <option value="20:30 - 22:30" ${sel==='20:30 - 22:30'?'selected':''}>20:30 - 22:30</option>
+      </select>
+    </div>`;
+  });
+  c.innerHTML = html;
+}
+
 function openSubjectModal(i) {
   editSubjectIndex = i;
   let exContainer = document.getElementById('sub-exams-container');
+  activeSubDays = [];
+  subTimesMap = {};
+  
   if(i < 0) {
     document.getElementById('sub-name').value = '';
     document.getElementById('sub-code').value = '';
-    document.getElementById('sub-start').value = '';
-    document.getElementById('sub-end').value = '';
-    document.getElementById('sub-days').value = '';
     document.getElementById('sub-room').value = '';
     document.getElementById('sub-exams-count').value = 0;
     document.getElementById('sub-absences-limit').value = 10;
@@ -1900,15 +1934,19 @@ function openSubjectModal(i) {
     let sub = studySubjects[i];
     document.getElementById('sub-name').value = sub.name || '';
     document.getElementById('sub-code').value = sub.code || '';
-    document.getElementById('sub-start').value = sub.start || '';
-    document.getElementById('sub-end').value = sub.end || '';
-    document.getElementById('sub-days').value = sub.days || '';
     document.getElementById('sub-room').value = sub.room || '';
     document.getElementById('sub-absences-limit').value = sub.absencesLimit || 10;
     let exCount = sub.exams ? sub.exams.length : 0;
     document.getElementById('sub-exams-count').value = exCount;
+    if(sub.schedules) {
+      sub.schedules.forEach(sc => {
+        activeSubDays.push(sc.day);
+        subTimesMap[sc.day] = sc.time;
+      });
+    }
     generateExamFields(sub.exams);
   }
+  renderSubTimes();
   document.getElementById('modal-subject').style.display='flex';
 }
 
@@ -1940,13 +1978,22 @@ function saveSubject() {
     exams.push({date: d, grade: oldGrade});
   }
 
+  let schedules = [];
+  let daysArr = [];
+  activeSubDays.forEach(d => {
+    let t = document.getElementById(`time-sel-${d}`).value;
+    schedules.push({day: d, time: t});
+    daysArr.push(d);
+  });
+
   let sub = {
     name: name,
     code: document.getElementById('sub-code').value,
-    start: document.getElementById('sub-start').value,
-    end: document.getElementById('sub-end').value,
-    days: document.getElementById('sub-days').value,
     room: document.getElementById('sub-room').value,
+    schedules: schedules,
+    days: daysArr.join(', '), 
+    start: schedules.length > 0 ? schedules[0].time.split(' - ')[0] : '', 
+    end: schedules.length > 0 ? schedules[0].time.split(' - ')[1] : '', 
     absencesLimit: parseInt(document.getElementById('sub-absences-limit').value) || 10,
     exams: exams,
     absencesCount: editSubjectIndex >= 0 ? (studySubjects[editSubjectIndex].absencesCount || 0) : 0
@@ -1957,10 +2004,18 @@ function saveSubject() {
 
   persistAll(); renderSubjects(); updatePomodoroSubjectList(); closeSubjectModal(); renderScheduleGrids();
   if(document.getElementById('screen-home').classList.contains('active')) {
-    renderHomeSubjects();
-    renderHomeAbsencesRanking();
+    renderHomeSubjects(); renderHomeAbsencesRanking();
   }
   showToast('t-save', 'Matéria Salva!');
+}
+
+function deleteSubject(i) {
+  if(!confirm('Deseja realmente apagar esta matéria?')) return;
+  studySubjects.splice(i, 1);
+  persistAll(); renderSubjects(); updatePomodoroSubjectList(); renderScheduleGrids();
+  if(document.getElementById('screen-home').classList.contains('active')) {
+    renderHomeSubjects(); renderHomeAbsencesRanking();
+  }
 }
 
 function saveExamGrade(subIdx, examIdx, val) {
@@ -1983,50 +2038,77 @@ function updatePomodoroSubjectList() {
   });
 }
 
+let pomoElapsed = 0;
+function updatePomoInput() {
+  if(isPomoRunning) return;
+  let val = parseInt(document.getElementById('pomo-min-input').value);
+  if(isNaN(val) || val < 1) val = 1;
+  pomoTime = val * 60;
+  document.getElementById('pomo-sec-display').textContent = ':00';
+}
+
 function updatePomoDisplay() {
   let m = Math.floor(pomoTime/60);
   let s = pomoTime % 60;
-  document.getElementById('pomodoro-display').textContent = `${pad(m)}:${pad(s)}`;
+  document.getElementById('pomo-min-input').value = m;
+  document.getElementById('pomo-sec-display').textContent = ':' + pad(s);
 }
 
 function startPomodoro() {
   const btn = document.getElementById('btn-pomodoro-start');
+  const minIn = document.getElementById('pomo-min-input');
   if(isPomoRunning) {
     clearInterval(pomoInterval);
     isPomoRunning = false;
     btn.innerHTML = '▶ Continuar';
     btn.style.background = 'var(--blue)';
+    minIn.disabled = false;
   } else {
     isPomoRunning = true;
     btn.innerHTML = '⏸ Pausar';
     btn.style.background = 'var(--rose)';
+    minIn.disabled = true;
     pomoInterval = setInterval(() => {
       if(pomoTime > 0) {
         pomoTime--;
+        pomoElapsed++;
         updatePomoDisplay();
       } else {
         clearInterval(pomoInterval);
         isPomoRunning = false;
-        let subj = document.getElementById('pomodoro-subject').value;
-        pomodoroLog.push({date: globalDateStr, subject: subj, duration: 1500, ts: Date.now()});
-        persistAll();
-        showToast('t-save', '🍅 Ciclo concluído!');
+        minIn.disabled = false;
+        savePomodoroLog();
+        showToast('t-save', '🍅 Tempo esgotado!');
         if(Notification.permission==='granted') new Notification('Foco', {body:'Ciclo finalizado!'});
         resetPomodoro();
-        renderStudyChart();
       }
     }, 1000);
   }
 }
 
+function saveAndResetPomodoro() {
+  if(pomoElapsed > 0) {
+    savePomodoroLog();
+    showToast('t-save', '💾 Tempo salvo!');
+  }
+  resetPomodoro();
+}
+
+function savePomodoroLog() {
+  let subj = document.getElementById('pomodoro-subject').value;
+  pomodoroLog.push({date: globalDateStr, subject: subj, duration: pomoElapsed, ts: Date.now()});
+  persistAll();
+  renderStudyChart();
+}
+
 function resetPomodoro() {
   clearInterval(pomoInterval);
   isPomoRunning = false;
-  pomoTime = 1500; // 25 min
-  updatePomoDisplay();
-  const btn = document.getElementById('btn-pomodoro-start');
-  btn.innerHTML = '▶ Iniciar';
-  btn.style.background = 'var(--amber)';
+  pomoElapsed = 0;
+  document.getElementById('pomo-min-input').disabled = false;
+  document.getElementById('btn-pomodoro-start').innerHTML = '▶ Iniciar';
+  document.getElementById('btn-pomodoro-start').style.background = 'var(--amber)';
+  updatePomoInput(); 
 }
 
 function changeStudyWeek(diff) {
@@ -2137,7 +2219,7 @@ function calcCycles(){
   const base=new Date(),sb=new Date(base);sb.setHours(sh,sm,0,0);const fa=new Date(sb.getTime()+sleepDelay*60000);const wl=new Date(base);wl.setHours(wh,wm,0,0);
   if(wl<=fa)wl.setDate(wl.getDate()+1);
   const res=[];
-  for(let c=2;c<=7;c++){const wt=new Date(fa.getTime()+c*90*60000);if(wt<=wl){const tot=c*90;res.push({c,lbl:pad(wt.getHours())+pad(wt.getMinutes()),dur:Math.floor(tot/60)+'h'+(tot%60>0?' '+tot%60+'min':'')+'·'+c+' ciclo'+(c>1?'s':''),q:c>=5?'best':c>=4?'ok':'min'});}}
+  for(let c=2;c<=7;c++){const wt=new Date(fa.getTime()+c*90*60000);if(wt<=wl){const tot=c*90;res.push({c,lbl:pad(wt.getHours())+':'+pad(wt.getMinutes()),dur:Math.floor(tot/60)+'h'+(tot%60>0?' '+tot%60+'min':'')+'·'+c+' ciclo'+(c>1?'s':''),q:c>=5?'best':c>=4?'ok':'min'});}}
   const con=document.getElementById('cycles-res');con.classList.add('vis');res.sort((a,b)=>b.c-a.c);
   if(res.length===0){con.innerHTML='<div class="sinfo"><span style="font-size:13px;">⚠️</span><span>Nenhum ciclo cabe. Ajuste o horário.</span></div>';return;}
   con.innerHTML='<div class="slabel" style="margin-top:8px;">⭐ Melhores horários</div>';
