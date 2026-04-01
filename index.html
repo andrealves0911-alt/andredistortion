@@ -49,6 +49,19 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .screen-title{font-size:20px;font-weight:800;letter-spacing:-.02em;color:var(--text);display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1;}
 .slabel{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);margin-bottom:10px;padding-left:2px;}
 
+/* SELECT MODERNO */
+select.modern-sel {
+  appearance: none; -webkit-appearance: none;
+  background-color: var(--input-bg); border: 1px solid var(--glass-b);
+  border-radius: 10px; color: var(--text);
+  padding: 10px 36px 10px 14px; font-size: 13px; font-weight: 700; font-family: inherit;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%238f9fb1%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+  cursor: pointer; transition: border-color 0.2s; outline:none;
+}
+select.modern-sel:focus { border-color: var(--blue); }
+select.modern-sel option { background-color: var(--bg2); color: var(--text); font-weight:700; }
+
 /* FAB */
 .fab-back{position:fixed;bottom:30px;left:24px;width:52px;height:52px;border-radius:50%;background:var(--glass);border:1px solid var(--glass-b);color:var(--text);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px var(--shadow);cursor:pointer;z-index:100;transition:transform .2s;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);font-size:20px;}
 .fab-back:active{transform:scale(0.9);}
@@ -120,14 +133,15 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .mc-desc{font-size:9px;font-weight:600;color:var(--text-m);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mc-orb{position:absolute;border-radius:50%;filter:blur(30px);pointer-events:none;width:80px;height:80px;top:-10px;right:-10px;opacity:0.3;}
 
-/* GRADE HORÁRIA WIDGET */
+/* GRADE HORÁRIA WIDGET (HOME) */
 .sched-widget{background:var(--glass);border:1px solid var(--glass-b);border-radius:22px;padding:18px;margin-bottom:14px;backdrop-filter:blur(16px);overflow-x:auto;}
 .sched-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
 .sched-badge{background:#63839c;color:#fff;font-size:10px;font-weight:800;padding:4px 8px;border-radius:6px;text-transform:uppercase;}
 .sched-grid{display:grid;grid-template-columns:55px repeat(5, minmax(100px, 1fr));gap:4px;min-width:600px;}
-.sched-cell{background:var(--surface-h);border-radius:6px;padding:6px;font-size:10px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:40px;color:var(--text-m);font-weight:700;}
+.sched-cell{background:var(--surface-h);border-radius:6px;padding:6px;font-size:10px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:40px;color:var(--text-m);font-weight:700;transition:background 0.3s;}
 .sched-header-cell{background:var(--surface);color:var(--text);font-weight:800;}
-.sched-block{background:#5cb85c;color:#fff;border-radius:6px;padding:6px;font-size:9px;font-weight:800;text-align:center;display:flex;flex-direction:column;justify-content:center;line-height:1.3;box-shadow:0 2px 8px rgba(92,184,92,0.3);}
+.sched-block{background:#5cb85c;color:#fff;border-radius:6px;padding:8px 6px;font-size:9px;font-weight:800;text-align:center;display:flex;flex-direction:column;justify-content:center;line-height:1.3;box-shadow:0 2px 8px rgba(92,184,92,0.3);}
+.sched-cell.current-day { background: rgba(79,163,255,0.1); border: 1px solid rgba(79,163,255,0.3); color:var(--blue); }
 
 /* HOME CHECKLIST & CARDS */
 .home-checklist-card{background:var(--glass);border:1px solid var(--glass-b);border-radius:var(--radius);padding:18px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
@@ -231,6 +245,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .cal-day.has-data::after{content:'';position:absolute;bottom:4px;width:4px;height:4px;background:var(--blue);border-radius:50%;}
 .cal-day.sel{background:var(--blue);color:#fff;border-color:rgba(255,255,255,0.3);font-weight:800;box-shadow:0 4px 12px rgba(79,163,255,.3);}
 .cal-day.sel.has-data::after{background:#fff;}
+
+/* NOVO: MARCAÇÃO DE PROVA NO CALENDÁRIO ESTUDOS */
+.cal-day.has-exam::after{content:'';position:absolute;bottom:4px;width:6px;height:6px;background:var(--amber);border-radius:50%;box-shadow:0 0 4px var(--amber);}
+.cal-day.sel.has-exam::after{background:#fff;}
+
 .cal-right{display:flex;flex-direction:column;max-height:calc(100vh - 110px);overflow-y:auto;padding-right:6px;scrollbar-width:none;}
 .cal-right::-webkit-scrollbar{display:none;}
 .cl-metrics-card{background:var(--glass);border:1px solid var(--glass-b);border-radius:var(--radius);padding:14px;backdrop-filter:blur(12px);margin-bottom:8px;}
@@ -376,14 +395,15 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .study-layout{display:grid;grid-template-columns:1fr;gap:20px;}
 @media(min-width:860px){.study-layout{grid-template-columns:1fr 1fr;}}
 
-/* GRADE HORÁRIA WIDGET (HOME) */
+/* GRADE HORÁRIA WIDGET */
 .sched-widget{background:var(--glass);border:1px solid var(--glass-b);border-radius:22px;padding:18px;margin-bottom:14px;backdrop-filter:blur(16px);overflow-x:auto;}
 .sched-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
 .sched-badge{background:#63839c;color:#fff;font-size:10px;font-weight:800;padding:4px 8px;border-radius:6px;text-transform:uppercase;}
 .sched-grid{display:grid;grid-template-columns:55px repeat(5, minmax(100px, 1fr));gap:4px;min-width:600px;}
-.sched-cell{background:var(--surface-h);border-radius:6px;padding:6px;font-size:10px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:40px;color:var(--text-m);font-weight:700;}
+.sched-cell{background:var(--surface-h);border-radius:6px;padding:6px;font-size:10px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:40px;color:var(--text-m);font-weight:700;transition:background 0.3s;}
 .sched-header-cell{background:var(--surface);color:var(--text);font-weight:800;}
-.sched-block{background:#5cb85c;color:#fff;border-radius:6px;padding:6px;font-size:9px;font-weight:800;text-align:center;display:flex;flex-direction:column;justify-content:center;line-height:1.3;box-shadow:0 2px 8px rgba(92,184,92,0.3);}
+.sched-block{background:#5cb85c;color:#fff;border-radius:6px;padding:8px 6px;font-size:9px;font-weight:800;text-align:center;display:flex;flex-direction:column;justify-content:center;line-height:1.3;box-shadow:0 2px 8px rgba(92,184,92,0.3);}
+.sched-cell.current-day { background: rgba(79,163,255,0.1); border: 1px solid rgba(79,163,255,0.3); color:var(--blue); }
 
 </style>
 </head>
@@ -483,14 +503,6 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
           </div>
           <div id="hc-list-area"><div class="empty-state">Carregando…</div></div>
         </div>
-        
-        <div class="home-checklist-card" style="margin-top:14px;">
-          <div class="hc-header">
-            <div><div class="hc-title">📚 Matérias</div></div>
-            <button class="hc-btn-all" onclick="goTo('study')" style="color:var(--amber);border-color:rgba(255,179,71,.3);background:rgba(255,179,71,.1);">Estudos →</button>
-          </div>
-          <div id="home-subjects-area"><div class="empty-state">Nenhuma matéria cadastrada.</div></div>
-        </div>
 
         <div class="home-checklist-card" style="margin-top:14px;">
           <div class="hc-header">
@@ -547,7 +559,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
         
         <div class="slabel" style="margin-top:16px;margin-bottom:10px;">📈 Progressão de Carga</div>
         <div class="cl-metrics-card">
-          <select id="load-chart-exercise" style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:9px;color:var(--text);font-size:12px;font-weight:700;font-family:inherit;padding:8px 10px;outline:none;margin-bottom:10px;" onchange="renderLoadChart()">
+          <select id="load-chart-exercise" class="modern-sel" style="width:100%;margin-bottom:10px;" onchange="renderLoadChart()">
             <option value="">— Selecione um exercício —</option>
           </select>
           <div style="position:relative;height:130px;"><canvas id="load-chart"></canvas></div>
@@ -688,13 +700,21 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 <div id="screen-study" class="screen">
   <div class="screen-header"><div class="screen-title">Estudos & Foco</div></div>
-  <div class="scontent">
+  <div class="scontent" style="position:relative;">
+    
+    <div id="exam-tooltip" style="display:none; position:absolute; background:var(--bg2); border:1px solid var(--amber); padding:12px; border-radius:12px; z-index:100; box-shadow:0 8px 24px rgba(0,0,0,0.5); color:var(--text); font-size:12px; max-width:220px; transition:opacity 0.2s;"></div>
+
+    <div class="slabel">📅 Calendário de Provas</div>
+    <div class="chart-card" style="padding:14px; margin-bottom:20px;">
+      <div class="cal-header"><button class="cal-btn" onclick="changeSMonth(-1)">❮</button><div class="cal-title" id="s-cal-month-label">Mês Ano</div><button class="cal-btn" onclick="changeSMonth(1)">❯</button></div>
+      <div class="cal-grid" id="s-cal-grid" style="margin-bottom:0; border:none; padding:0; background:transparent; box-shadow:none;"></div>
+    </div>
 
     <div class="study-layout">
       <div>
         <div class="slabel">🍅 Foco (Editável)</div>
         <div class="pomodoro-wrap">
-          <select id="pomodoro-subject" style="width:100%;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:9px;color:var(--text);font-size:12px;font-weight:700;font-family:inherit;padding:10px;outline:none;margin-bottom:10px;">
+          <select id="pomodoro-subject" class="modern-sel" style="width:100%;margin-bottom:10px;">
             <option value="Livre">Modo Livre</option>
           </select>
           
@@ -820,7 +840,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <div class="sitem" onclick="clearAllData()"><div class="si" style="color:var(--red);">🗑️</div><div class="stx"><div class="sl" style="color:var(--red);">Apagar tudo</div><div class="ss">Remoção irreversível</div></div></div>
       <input type="file" id="import-file" style="display:none;" accept=".txt" onchange="importBackup(event)">
     </div>
-    <div style="text-align:center;padding:24px 0;color:var(--text-d);font-size:11px;">andredistortion's life v23.0 · Firebase Sync</div>
+    <div style="text-align:center;padding:24px 0;color:var(--text-d);font-size:11px;">andredistortion's life v24.0 · Firebase Sync</div>
   </div>
 </div>
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
@@ -966,6 +986,7 @@ let curTheme=localStorage.getItem('v_theme')||'dark';
 let currentTIRMode='daily';
 let calDate=new Date(),selectedCalDate=globalDateStr;
 let wCalDate=new Date(),wSelectedDateStr=globalDateStr;
+let sCalDate=new Date(); // Data do Calendario de Estudos
 let wProfiles={};
 let rawProf=JSON.parse(localStorage.getItem('v_workout_profiles')||'{}');
 for(let k in rawProf)wProfiles[safeKey(k)]=rawProf[k];
@@ -1160,7 +1181,7 @@ dbRef.on('value',(snap)=>{
   if(document.getElementById('screen-calendar').classList.contains('active')){renderCalendar();renderCalData();}
   if(document.getElementById('screen-workout').classList.contains('active')){renderWCalendar();renderWData();renderWeightChart();renderLoadChart();}
   if(document.getElementById('screen-checklist').classList.contains('active')){renderCLCalendar();renderCLData();}
-  if(document.getElementById('screen-study').classList.contains('active')){renderSubjects();updatePomodoroSubjectList();renderStudyChart();renderScheduleGrids();}
+  if(document.getElementById('screen-study').classList.contains('active')){renderSubjects();updatePomodoroSubjectList();renderStudyChart();renderScheduleGrids();renderSCalendar();}
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1196,7 +1217,7 @@ async function init(){
     ]);
     clearTimeout(offlineTimer);
     const data=snap.val();
-    if(data){applyState(data);saveLocalState();applyTheme(curTheme,true);loadingText.textContent='Dados carregados ✓';}
+    if(data){applyState(data);saveLocalState();applyTheme(curTheme,true);document.getElementById('ialarm-time').value=iAlarm.time;setAType(iAlarm.type,null,true);loadingText.textContent='Dados carregados ✓';}
     else{loadingText.textContent='Enviando dados locais…';await forceSyncToCloud();loadingText.textContent='Pronto ✓';}
   }catch(e){
     clearTimeout(offlineTimer);
@@ -1272,7 +1293,6 @@ function updateHomeWidgets(){
   const ngEl=document.getElementById('ng-val');if(ngEl)ngEl.textContent=nota+'%';
   
   renderHomeChecklist(todayStr,gTir,wPct);
-  renderHomeSubjects();
   renderHomeAbsencesRanking();
   renderScheduleGrids();
 }
@@ -1293,22 +1313,6 @@ function renderHomeChecklist(todayStr,gTir,wPct){
   });
   if(clCustom&&clCustom.length>6)html+=`<div style="text-align:center;font-size:11px;font-weight:700;color:var(--blue);padding:6px 0;cursor:pointer;" onclick="goTo('checklist')">+${clCustom.length-6} mais →</div>`;
   area.innerHTML=html;
-}
-
-function renderHomeSubjects() {
-  const area = document.getElementById('home-subjects-area');
-  if(!area) return;
-  if(!studySubjects || studySubjects.length === 0) {
-     area.innerHTML = '<div class="empty-state" style="padding:10px 0;">Nenhuma matéria cadastrada.</div>';
-     return;
-  }
-  let html = '';
-  studySubjects.forEach(s => {
-     let roomHtml = s.room ? `<div style="font-size:10px;color:var(--text-d);margin-top:2px;">📍 ${s.room}</div>` : '';
-     let timesStr = s.schedules && s.schedules.length > 0 ? s.schedules.map(sc => `${sc.day} ${sc.time}`).join(' | ') : '';
-     html += `<div class="hc-item"><div style="flex:1;"><div class="hc-label">${s.name||'Materia'}</div><div class="hc-sublabel" style="font-weight:800;color:var(--amber);">${timesStr}</div>${roomHtml}</div></div>`;
-  });
-  area.innerHTML = html;
 }
 
 function renderHomeAbsencesRanking() {
@@ -1351,23 +1355,30 @@ function renderScheduleGrids() {
   ];
   const days = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'];
   
+  // Highlight do dia atual
+  const jsDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const currentDayName = jsDays[new Date().getDay()];
+  
   let html = '<div class="sched-grid">';
   html += '<div class="sched-cell sched-header-cell">Horário</div>';
-  days.forEach(d => html += `<div class="sched-cell sched-header-cell">${d}</div>`);
+  days.forEach(d => {
+    let hi = (d === currentDayName) ? 'current-day' : '';
+    html += `<div class="sched-cell sched-header-cell ${hi}">${d}</div>`;
+  });
   
   slots.forEach(slot => {
      html += `<div class="sched-cell" style="background:var(--surface); font-weight:800;">${slot.label.replace('\n','<br>')}</div>`;
      days.forEach(d => {
+        let hi = (d === currentDayName) ? 'current-day' : '';
         const sub = studySubjects.find(s => s.schedules && s.schedules.some(sc => sc.day === d && sc.time === slot.timeStr));
         if(sub) {
-           html += `<div class="sched-block">
+           html += `<div class="sched-block ${hi}">
              <div style="font-size:10px;font-weight:900;opacity:0.9;">${sub.code||''}</div>
              <div style="margin:4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${sub.name}">${sub.name}</div>
-             <div style="color:rgba(255,255,255,0.7);font-size:8px;">${slot.timeStr}</div>
              ${sub.room ? `<div style="margin-top:2px;color:#fff;font-weight:800;font-size:9px;">📍 ${sub.room}</div>` : ''}
            </div>`;
         } else {
-           html += `<div class="sched-cell"></div>`;
+           html += `<div class="sched-cell ${hi}"></div>`;
         }
      });
   });
@@ -1410,7 +1421,7 @@ function goTo(s){
   if(s==='calendar'){calDate=new Date();selectedCalDate=globalDateStr;renderCalendar();renderCalData(); document.getElementById('screen-calendar').classList.add('active');}
   if(s==='workout'){wCalDate=new Date();wSelectedDateStr=globalDateStr;renderWCalendar();renderWData();setTimeout(()=>{renderWeightChart();renderLoadChart();},100);}
   if(s==='checklist'){clCalDate=new Date();clSelectedDateStr=globalDateStr;renderCLCalendar();renderCLData();}
-  if(s==='study'){renderSubjects();updatePomodoroSubjectList();renderStudyChart();renderScheduleGrids();}
+  if(s==='study'){renderSubjects();updatePomodoroSubjectList();renderStudyChart();renderScheduleGrids();renderSCalendar();}
   if(s==='home')updateHomeWidgets();
 }
 function goBack(){goTo('home');}
@@ -1490,7 +1501,7 @@ function renderCLData(){
   const wd=wLog[clSelectedDateStr];let wText='Treino: Sem plano',wDone=false;
   if(wd&&wd.exercises&&wd.exercises.length>0){let done=wd.exercises.filter(ex=>ex.done).length;let pct=Math.round((done/wd.exercises.length)*100);wText='Treino: '+pct+'% concluído';wDone=pct===100;}
   html+=`<div class="w-item cl-item ${wDone?'done':''}" style="opacity:1;background:var(--surface-h);border-color:transparent;margin-bottom:10px;"><div class="w-check" style="cursor:default;">${wDone?'✓':''}</div><div class="w-details"><span style="color:var(--text);font-size:13px;font-weight:700;">${wText}</span><span style="font-size:10px;color:var(--text-m);">Meta Automática</span></div></div>`;
-  if(clCustom.length===0)html+=`<div class="empty-state">Sem metas manuais.</div>`;
+  if(!clCustom || clCustom.length===0)html+=`<div class="empty-state">Sem metas manuais.</div>`;
   else clCustom.forEach((item,idx)=>{let isDone=clLog[clSelectedDateStr]&&clLog[clSelectedDateStr][item];html+=`<div class="w-item cl-item ${isDone?'done':''}"><div class="w-check" onclick="toggleCLItem('${item}')">${isDone?'✓':''}</div><div class="w-details"><span style="color:var(--text);font-size:13px;font-weight:700;">${item}</span></div><div class="del-btn" onclick="removeCLItem(${idx})">✕</div></div>`;});
   list.innerHTML=html;updateCLMetrics();
 }
@@ -1499,7 +1510,7 @@ function addCLItem(){const item=prompt("Novo item permanente:");if(item&&item.tr
 function removeCLItem(idx){if(!confirm('Remover item?'))return;clCustom.splice(idx,1);persistAll();renderCLData();}
 
 // ═══════════════════════════════════════════════════════════
-// DIETA E PROTEÍNAS (COM BLINDAGEM DE ARRAYS)
+// DIETA E PROTEÍNAS
 // ═══════════════════════════════════════════════════════════
 function renderDietData(){
   const dd=dLog[wSelectedDateStr]||{goal:defaultDietGoal,items:[]};
@@ -1512,8 +1523,8 @@ function renderDietData(){
 function addMeal(){
   const meal=document.getElementById('diet-meal').value,kcal=document.getElementById('diet-kcal').value,time=document.getElementById('diet-time').value;
   if(!meal||!kcal||!time)return showToast('t-save','Preencha todos os campos!');
-  if(!dLog[wSelectedDateStr])dLog[wSelectedDateStr]={goal:defaultDietGoal,items:[]};
-  if(!dLog[wSelectedDateStr].items) dLog[wSelectedDateStr].items=[]; 
+  if(!dLog[wSelectedDateStr]) dLog[wSelectedDateStr]={goal:defaultDietGoal,items:[]};
+  if(!Array.isArray(dLog[wSelectedDateStr].items)) dLog[wSelectedDateStr].items = []; 
   dLog[wSelectedDateStr].items.unshift({meal:safeKey(meal),kcal,time});
   persistAll();document.getElementById('diet-meal').value='';document.getElementById('diet-kcal').value='';renderDietData();showToast('t-save','Refeição Salva!');
 }
@@ -1531,8 +1542,8 @@ function renderProtData(){
 function addProtein(){
   const meal=document.getElementById('prot-meal').value,qty=document.getElementById('prot-qty').value,time=document.getElementById('prot-time').value;
   if(!meal||!qty||!time)return showToast('t-save','Preencha todos os campos!');
-  if(!protLog[wSelectedDateStr])protLog[wSelectedDateStr]={goal:defaultProtGoal,items:[]};
-  if(!protLog[wSelectedDateStr].items) protLog[wSelectedDateStr].items=[]; 
+  if(!protLog[wSelectedDateStr]) protLog[wSelectedDateStr]={goal:defaultProtGoal,items:[]};
+  if(!Array.isArray(protLog[wSelectedDateStr].items)) protLog[wSelectedDateStr].items = []; 
   protLog[wSelectedDateStr].items.unshift({meal:safeKey(meal),qty,time});
   persistAll();document.getElementById('prot-meal').value='';document.getElementById('prot-qty').value='';
   renderProtData();showToast('t-save','Proteína Salva!');
@@ -1642,7 +1653,7 @@ function toggleWCheck(i){wLog[wSelectedDateStr].exercises[i].done=!wLog[wSelecte
 function editWEx(i,field,val){if(!wLog[wSelectedDateStr])return;wLog[wSelectedDateStr].exercises[i][field]=val;persistAll();}
 function addWEx(){
   if(!wLog[wSelectedDateStr]) wLog[wSelectedDateStr]={exercises:[]};
-  if(!wLog[wSelectedDateStr].exercises) wLog[wSelectedDateStr].exercises=[];
+  if(!Array.isArray(wLog[wSelectedDateStr].exercises)) wLog[wSelectedDateStr].exercises=[];
   wLog[wSelectedDateStr].exercises.push({name:'',reps:'3 x 10',load:'',done:false});
   persistAll();renderWData();
 }
@@ -2065,7 +2076,7 @@ function saveSubject() {
   if(editSubjectIndex >= 0) studySubjects[editSubjectIndex] = sub;
   else studySubjects.push(sub);
 
-  persistAll(); renderSubjects(); updatePomodoroSubjectList(); closeSubjectModal(); renderScheduleGrids();
+  persistAll(); renderSubjects(); updatePomodoroSubjectList(); closeSubjectModal(); renderScheduleGrids(); renderSCalendar();
   if(document.getElementById('screen-home').classList.contains('active')) {
     renderHomeSubjects(); renderHomeAbsencesRanking();
   }
@@ -2075,7 +2086,7 @@ function saveSubject() {
 function deleteSubject(i) {
   if(!confirm('Deseja realmente apagar esta matéria?')) return;
   studySubjects.splice(i, 1);
-  persistAll(); renderSubjects(); updatePomodoroSubjectList(); renderScheduleGrids();
+  persistAll(); renderSubjects(); updatePomodoroSubjectList(); renderScheduleGrids(); renderSCalendar();
   if(document.getElementById('screen-home').classList.contains('active')) {
     renderHomeSubjects(); renderHomeAbsencesRanking();
   }
@@ -2247,6 +2258,49 @@ function renderStudyChart() {
       }
     }
   });
+}
+
+function changeSMonth(d){sCalDate.setMonth(sCalDate.getMonth()+d);renderSCalendar();}
+function renderSCalendar(){
+  const yr=sCalDate.getFullYear(),mo=sCalDate.getMonth();
+  const elLabel = document.getElementById('s-cal-month-label');
+  if(!elLabel) return;
+  elLabel.textContent=new Date(yr,mo,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  const fd=new Date(yr,mo,1).getDay(),dm=new Date(yr,mo+1,0).getDate();
+  const g=document.getElementById('s-cal-grid');g.innerHTML='';
+  ['D','S','T','Q','Q','S','S'].forEach(d=>g.innerHTML+=`<div class="cal-dw">${d}</div>`);
+  for(let i=0;i<fd;i++)g.innerHTML+=`<div class="cal-day empty"></div>`;
+  
+  let examMap = {};
+  studySubjects.forEach(sub => {
+    if(sub.exams) {
+      sub.exams.forEach((ex, idx) => {
+        if(ex.date) {
+          if(!examMap[ex.date]) examMap[ex.date] = [];
+          examMap[ex.date].push(`${sub.name} (Prova ${idx+1})`);
+        }
+      });
+    }
+  });
+
+  for(let i=1;i<=dm;i++){
+    let isoDate = `${yr}-${pad(mo+1)}-${pad(i)}`; 
+    let hasExam = examMap[isoDate] ? true : false;
+    let examText = hasExam ? examMap[isoDate].join(' | ') : '';
+    
+    let onClickAction = hasExam ? `showExamTooltip('${examText}', event)` : '';
+    
+    g.innerHTML+=`<div class="cal-day ${hasExam?'has-exam sel':''}" onclick="${onClickAction}" style="cursor:${hasExam?'pointer':'default'}">${i}</div>`;
+  }
+}
+function showExamTooltip(text, event) {
+  const tooltip = document.getElementById('exam-tooltip');
+  if(!tooltip) return;
+  tooltip.textContent = text;
+  tooltip.style.display = 'block';
+  tooltip.style.left = (event.pageX - 50) + 'px';
+  tooltip.style.top = (event.pageY + 20) + 'px';
+  setTimeout(() => { tooltip.style.display = 'none'; }, 3500);
 }
 
 // ═══════════════════════════════════════════════════════════
