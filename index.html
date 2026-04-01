@@ -8,6 +8,8 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
 <style>
 :root{--radius:24px;--radius-sm:16px;--radius-xs:12px;--blue:#4fa3ff;--purple:#b47fff;--teal:#3fdbc8;--rose:#ff6b9d;--amber:#ffb347;--green:#4ade80;--red:#ff6b6b;}
 [data-theme="dark"]{--bg:#0a0a14;--bg2:#0d0d1a;--surface:rgba(255,255,255,0.06);--surface-h:rgba(255,255,255,0.11);--glass:rgba(255,255,255,0.04);--glass-b:rgba(255,255,255,0.1);--text:#f0f0f8;--text-m:rgba(240,240,248,0.55);--text-d:rgba(240,240,248,0.3);--card-bg:rgba(255,255,255,0.03);--card-b:rgba(255,255,255,0.06);--input-bg:rgba(255,255,255,0.05);--divider:rgba(255,255,255,0.07);--shadow:rgba(0,0,0,0.5);--orb:0.4;}
@@ -49,13 +51,21 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .screen-title{font-size:20px;font-weight:800;letter-spacing:-.02em;color:var(--text);display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1;}
 .slabel{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);margin-bottom:10px;padding-left:2px;}
 
+/* DRAG & DROP WIDGETS */
+.drag-handle { cursor: grab; color: var(--text-d); font-size: 16px; padding: 4px; user-select: none; transition: color 0.2s; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; }
+.drag-handle:hover { color: var(--text); }
+.drag-handle:active { cursor: grabbing; }
+.sortable-ghost { opacity: 0.4; outline: 2px dashed var(--blue); border-radius: var(--radius); }
+.widget-draggable { position: relative; }
+.widget-header-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+
 /* SELECT MODERNO */
 select.modern-sel {
   appearance: none; -webkit-appearance: none;
   background-color: var(--input-bg); border: 1px solid var(--glass-b);
   border-radius: 10px; color: var(--text);
   padding: 10px 36px 10px 14px; font-size: 13px; font-weight: 700; font-family: inherit;
-  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%238f9fb1%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%238f9fb1%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
   background-repeat: no-repeat; background-position: right 10px center;
   cursor: pointer; transition: border-color 0.2s; outline:none;
 }
@@ -107,12 +117,12 @@ select.modern-sel option { background-color: var(--bg2); color: var(--text); fon
 .home-greeting{font-size:11px;font-weight:600;color:var(--text-m);letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px;}
 .home-title{font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.1;background:linear-gradient(135deg,var(--text) 0%,var(--blue) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .home-layout{display:flex;flex-direction:column;gap:16px;}
-@media(min-width:860px){.home-layout{flex-direction:row;align-items:flex-start;gap:22px;}.home-left{flex:1;min-width:0;}.home-right{width:340px;flex-shrink:0;}}
-.widget-weather{background:linear-gradient(135deg,var(--blue),var(--purple));padding:20px;border-radius:22px;color:#fff;display:flex;justify-content:space-between;align-items:center;box-shadow:0 8px 24px rgba(180,127,255,0.2);position:relative;overflow:hidden;margin-bottom:14px;}
+@media(min-width:860px){.home-layout{flex-direction:row;align-items:flex-start;gap:22px;}.home-left{flex:1;min-width:0;display:flex;flex-direction:column;gap:14px;}.home-right{width:340px;flex-shrink:0;display:flex;flex-direction:column;gap:14px;}}
+.widget-weather{background:linear-gradient(135deg,var(--blue),var(--purple));padding:20px;border-radius:22px;color:#fff;display:flex;justify-content:space-between;align-items:center;box-shadow:0 8px 24px rgba(180,127,255,0.2);position:relative;overflow:hidden;}
 .widget-weather::after{content:'';position:absolute;right:-20px;top:-20px;width:100px;height:100px;background:rgba(255,255,255,0.1);border-radius:50%;filter:blur(20px);pointer-events:none;}
 .ww-time{font-size:38px;font-weight:800;letter-spacing:-2px;line-height:1;margin-bottom:4px;}
 .ww-date{font-size:12px;font-weight:600;opacity:0.9;}
-.widget-metrics{background:var(--glass);border:1px solid var(--glass-b);padding:18px;border-radius:22px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);margin-bottom:14px;}
+.widget-metrics{background:var(--glass);border:1px solid var(--glass-b);padding:18px;border-radius:22px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
 .wm-header{font-size:13px;font-weight:800;color:var(--text);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
 .wm-bar-group{margin-bottom:11px;}
 .wm-bar-group:last-child{margin-bottom:0;}
@@ -134,14 +144,14 @@ select.modern-sel option { background-color: var(--bg2); color: var(--text); fon
 .mc-orb{position:absolute;border-radius:50%;filter:blur(30px);pointer-events:none;width:80px;height:80px;top:-10px;right:-10px;opacity:0.3;}
 
 /* GRADE HORÁRIA WIDGET */
-.sched-widget{background:var(--glass);border:1px solid var(--glass-b);border-radius:22px;padding:18px;margin-bottom:14px;backdrop-filter:blur(16px);overflow-x:auto;}
+.sched-widget{background:var(--glass);border:1px solid var(--glass-b);border-radius:22px;padding:18px;backdrop-filter:blur(16px);overflow-x:auto;}
 .sched-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
 .sched-badge{background:#63839c;color:#fff;font-size:10px;font-weight:800;padding:4px 8px;border-radius:6px;text-transform:uppercase;}
 .sched-grid{display:grid;grid-template-columns:55px repeat(5, minmax(100px, 1fr));gap:4px;min-width:600px;}
 .sched-cell{background:var(--surface-h);border-radius:6px;padding:6px;font-size:10px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:40px;color:var(--text-m);font-weight:700;transition:background 0.3s;}
 .sched-header-cell{background:var(--surface);color:var(--text);font-weight:800;}
 .sched-block{background:#5cb85c;color:#fff;border-radius:6px;padding:8px 6px;font-size:9px;font-weight:800;text-align:center;display:flex;flex-direction:column;justify-content:center;line-height:1.3;box-shadow:0 2px 8px rgba(92,184,92,0.3);}
-.sched-cell.current-day { background: rgba(79,163,255,0.1); border: 1px solid rgba(79,163,255,0.3); color:var(--blue); }
+.sched-cell.current-day { background: rgba(180,127,255,0.15); border: 1px solid rgba(180,127,255,0.4); color:var(--purple); }
 
 /* HOME CHECKLIST & CARDS */
 .home-checklist-card{background:var(--glass);border:1px solid var(--glass-b);border-radius:var(--radius);padding:18px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
@@ -208,6 +218,8 @@ select.modern-sel option { background-color: var(--bg2); color: var(--text); fon
 .db-check.done .ibig-label{color:var(--green);}
 .custom-input{width:calc(100% - 36px);margin:0 18px 10px;padding:11px 14px;background:var(--input-bg);border:1px solid var(--glass-b);border-radius:var(--radius-xs);color:var(--text);font-size:13px;font-family:inherit;outline:none;display:none;flex-shrink:0;}
 .extra-info{padding:10px 18px 100px;flex-shrink:0;display:flex;flex-direction:column;gap:22px;}
+.extra-info-sortable { display: flex; flex-direction: column; gap: 22px; }
+
 .btn-secondary{width:100%;padding:14px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;transition:all .3s;font-family:inherit;background:var(--glass);border:1px solid var(--glass-b);color:var(--text);display:flex;align-items:center;justify-content:center;gap:8px;backdrop-filter:blur(12px);}
 .btn-secondary:active{transform:scale(.97);background:var(--surface-h);}
 .btn-primary{width:100%;padding:14px;border-radius:var(--radius-sm);font-size:14px;font-weight:700;cursor:pointer;transition:all .3s;border:none;font-family:inherit;color:white;display:flex;align-items:center;justify-content:center;gap:8px;}
@@ -444,17 +456,25 @@ select.modern-sel option { background-color: var(--bg2); color: var(--text); fon
         <span id="home-date" style="font-size:10px;"></span>
       </div>
     </div>
+    
     <div class="home-layout">
-      <div class="home-left">
-        <div class="widget-weather">
-          <div><div class="ww-time" id="ww-time-big">00:00</div><div class="ww-date" id="ww-date-big">—</div></div>
-          <div style="text-align:right;z-index:1;"><div style="font-size:32px;margin-bottom:2px;">🌤️</div><div style="font-size:10px;font-weight:700;opacity:0.9;">Curitiba</div></div>
+      <div class="home-left" id="home-sortable-left">
+        
+        <div class="widget-draggable" data-id="widget-weather">
+          <div class="widget-weather">
+            <div class="drag-handle" style="position:absolute; top:12px; right:12px; z-index:2; color:rgba(255,255,255,0.7);">⠿</div>
+            <div><div class="ww-time" id="ww-time-big">00:00</div><div class="ww-date" id="ww-date-big">—</div></div>
+            <div style="text-align:right;z-index:1; padding-right:24px;"><div style="font-size:32px;margin-bottom:2px;">🌤️</div><div style="font-size:10px;font-weight:700;opacity:0.9;">Curitiba</div></div>
+          </div>
         </div>
         
-        <div class="widget-metrics">
-          <div class="wm-header">
-            <span>Meu Progresso Hoje</span>
-            <div class="nota-geral-badge"><div class="ng-val" id="ng-val">—</div><div class="ng-label">Nota Geral</div></div>
+        <div class="widget-draggable widget-metrics" data-id="widget-metrics">
+          <div class="widget-header-row" style="margin-bottom:14px;">
+            <div class="wm-header" style="margin:0; width:100%;">
+              <span>Meu Progresso Hoje</span>
+              <div class="nota-geral-badge"><div class="ng-val" id="ng-val">—</div><div class="ng-label">Nota Geral</div></div>
+            </div>
+            <div class="drag-handle" style="margin-left:8px;">⠿</div>
           </div>
           <div class="wm-bar-group"><div class="wm-label"><span>💉 Glicose</span><span id="wm-val-g" class="wm-val">0%</span></div><div class="wm-bar"><div class="wm-fill" id="wm-fill-g" style="background:var(--teal);width:0%;"></div></div></div>
           <div class="wm-bar-group"><div class="wm-label"><span>💪 Treino</span><span id="wm-val-w" class="wm-val">0%</span></div><div class="wm-bar"><div class="wm-fill" id="wm-fill-w" style="background:var(--rose);width:0%;"></div></div></div>
@@ -462,38 +482,50 @@ select.modern-sel option { background-color: var(--bg2); color: var(--text); fon
           <div class="wm-bar-group"><div class="wm-label"><span>🥗 Calorias</span><span id="wm-val-d" class="wm-val">0 / 4000</span></div><div class="wm-bar"><div class="wm-fill" id="wm-fill-d" style="background:var(--amber);width:0%;"></div></div></div>
         </div>
 
-        <div class="sched-widget">
-          <div class="sched-header">
-            <span style="font-size:13px;font-weight:800;color:var(--text);">📅 Minha Grade</span>
-            <span class="sched-badge">1º Semestre</span>
+        <div class="widget-draggable sched-widget" data-id="widget-schedule">
+          <div class="widget-header-row" style="margin-bottom:14px;">
+            <div class="sched-header" style="margin:0;">
+              <span style="font-size:13px;font-weight:800;color:var(--text);">📅 Minha Grade</span>
+              <span class="sched-badge">Atual</span>
+            </div>
+            <div class="drag-handle">⠿</div>
           </div>
           <div id="home-schedule-grid">
             <div class="empty-state">Nenhuma aula cadastrada.</div>
           </div>
         </div>
 
-        <div class="menu-cards">
-          <div class="menu-card" onclick="goTo('glucose')"><div class="mc-orb" style="background:var(--blue);"></div><div class="mc-icon">💉</div><div class="mc-text"><div class="mc-title">Glicose</div><div class="mc-desc">Registro e métricas</div></div></div>
-          <div class="menu-card" onclick="goTo('workout')"><div class="mc-orb" style="background:var(--rose);"></div><div class="mc-icon">💪</div><div class="mc-text"><div class="mc-title">Treino & Dieta</div><div class="mc-desc">Rotina e carga</div></div></div>
-          <div class="menu-card" onclick="goTo('checklist')"><div class="mc-orb" style="background:var(--teal);"></div><div class="mc-icon">✅</div><div class="mc-text"><div class="mc-title">Checklist</div><div class="mc-desc">Metas diárias</div></div></div>
-          <div class="menu-card" onclick="goTo('study')"><div class="mc-orb" style="background:var(--amber);"></div><div class="mc-icon">📚</div><div class="mc-text"><div class="mc-title">Estudos</div><div class="mc-desc">Matérias & Foco</div></div></div>
-          <div class="menu-card" onclick="goTo('sleep')"><div class="mc-orb" style="background:var(--purple);"></div><div class="mc-icon">🌙</div><div class="mc-text"><div class="mc-title">Sono</div><div class="mc-desc">Calculadora ideal</div></div></div>
-          <div class="menu-card" onclick="goTo('settings')"><div class="mc-orb" style="background:var(--glass-b);"></div><div class="mc-icon">⚙️</div><div class="mc-text"><div class="mc-title">Ajustes</div><div class="mc-desc">App & Backup</div></div></div>
+        <div class="widget-draggable" data-id="widget-menu">
+          <div style="display:flex; justify-content:flex-end; margin-bottom:4px;"><div class="drag-handle">⠿</div></div>
+          <div class="menu-cards">
+            <div class="menu-card" onclick="goTo('glucose')"><div class="mc-orb" style="background:var(--blue);"></div><div class="mc-icon">💉</div><div class="mc-text"><div class="mc-title">Glicose</div><div class="mc-desc">Registro e métricas</div></div></div>
+            <div class="menu-card" onclick="goTo('workout')"><div class="mc-orb" style="background:var(--rose);"></div><div class="mc-icon">💪</div><div class="mc-text"><div class="mc-title">Treino & Dieta</div><div class="mc-desc">Rotina e carga</div></div></div>
+            <div class="menu-card" onclick="goTo('checklist')"><div class="mc-orb" style="background:var(--teal);"></div><div class="mc-icon">✅</div><div class="mc-text"><div class="mc-title">Checklist</div><div class="mc-desc">Metas diárias</div></div></div>
+            <div class="menu-card" onclick="goTo('study')"><div class="mc-orb" style="background:var(--amber);"></div><div class="mc-icon">📚</div><div class="mc-text"><div class="mc-title">Estudos</div><div class="mc-desc">Matérias & Foco</div></div></div>
+            <div class="menu-card" onclick="goTo('sleep')"><div class="mc-orb" style="background:var(--purple);"></div><div class="mc-icon">🌙</div><div class="mc-text"><div class="mc-title">Sono</div><div class="mc-desc">Calculadora ideal</div></div></div>
+            <div class="menu-card" onclick="goTo('settings')"><div class="mc-orb" style="background:var(--glass-b);"></div><div class="mc-icon">⚙️</div><div class="mc-text"><div class="mc-title">Ajustes</div><div class="mc-desc">App & Backup</div></div></div>
+          </div>
         </div>
       </div>
       
-      <div class="home-right">
-        <div class="home-checklist-card">
-          <div class="hc-header">
-            <div><div class="hc-title">✅ Checklist de Hoje</div><div class="hc-date" id="hc-date-label"></div></div>
-            <button class="hc-btn-all" onclick="goTo('checklist')">Ver tudo →</button>
+      <div class="home-right" id="home-sortable-right">
+        <div class="widget-draggable home-checklist-card" data-id="widget-checklist">
+          <div class="widget-header-row" style="margin-bottom:13px;">
+            <div class="hc-header" style="margin:0; flex:1;">
+              <div><div class="hc-title">✅ Checklist de Hoje</div><div class="hc-date" id="hc-date-label"></div></div>
+              <button class="hc-btn-all" onclick="goTo('checklist')">Ver tudo →</button>
+            </div>
+            <div class="drag-handle" style="margin-left:8px;">⠿</div>
           </div>
           <div id="hc-list-area"><div class="empty-state">Carregando…</div></div>
         </div>
 
-        <div class="home-checklist-card" style="margin-top:14px;">
-          <div class="hc-header">
-            <div><div class="hc-title">⚠️ Ranking de Faltas</div></div>
+        <div class="widget-draggable home-checklist-card" data-id="widget-absences">
+          <div class="widget-header-row" style="margin-bottom:13px;">
+            <div class="hc-header" style="margin:0; flex:1;">
+              <div><div class="hc-title">⚠️ Ranking de Faltas</div></div>
+            </div>
+            <div class="drag-handle" style="margin-left:8px;">⠿</div>
           </div>
           <div id="home-absences-area"><div class="empty-state">Carregando...</div></div>
         </div>
@@ -592,6 +624,7 @@ select.modern-sel option { background-color: var(--bg2); color: var(--text); fon
     </div>
   </div>
 </div>
+
 <div id="screen-glucose" class="screen">
   <div class="screen-header">
     <div class="screen-title">Glicose <div id="g-notifications" style="display:flex;gap:4px;"></div></div>
@@ -648,36 +681,54 @@ select.modern-sel option { background-color: var(--bg2); color: var(--text); fon
       </div>
     </div>
     <input class="custom-input" id="custom-tag" type="text" placeholder="Nome da tag (apenas letras/números)..." oninput="this.value=this.value.replace(/[^a-zA-Z0-9À-ÿ \-]/g,'')">
-    <div class="extra-info">
-      <button class="btn-secondary" onclick="goTo('calendar')">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-        Ver Calendário e Gráficos
-      </button>
-
-      <div class="slabel">Métricas por Tag e Horário</div>
-      <div class="charts-row">
-        <div class="chart-card"><div class="chart-title">Glicose por Tag</div><div style="position:relative;height:180px;"><canvas id="glucose-tag-chart"></canvas></div></div>
-        <div class="chart-card"><div class="chart-title">Glicose por Horário</div><div style="position:relative;height:180px;"><canvas id="glucose-time-chart"></canvas></div></div>
-      </div>
-
-      <div class="slabel">Tempo no Alvo (TIR)</div>
-      <div class="tir-card">
-        <div class="tir-toggle">
-          <button class="tir-btn active" id="btn-tir-daily" onclick="setTIRMode('daily')">Hoje</button>
-          <button class="tir-btn" id="btn-tir-90d" onclick="setTIRMode('90d')">90 Dias</button>
-        </div>
-        <div class="tir-header"><span>Meta: &gt;70% na faixa</span><span id="tir-total-readings" style="color:var(--text);font-weight:800;">0 medições</span></div>
-        <div class="tir-bar">
-          <div id="tir-low" class="tir-seg low" style="width:0%"></div>
-          <div id="tir-norm" class="tir-seg normal" style="width:0%"></div>
-          <div id="tir-high" class="tir-seg high" style="width:0%"></div>
-        </div>
-        <div class="tir-stats">
-          <div class="tir-stat"><div class="tir-dot low"></div> Baixo <span id="tirl-low">0%</span></div>
-          <div class="tir-stat"><div class="tir-dot normal"></div> No Alvo <span id="tirl-norm">0%</span></div>
-          <div class="tir-stat"><div class="tir-dot high"></div> Alto <span id="tirl-high">0%</span></div>
+    
+    <div class="extra-info" id="glucose-sortable">
+      
+      <div class="widget-draggable" data-id="widget-calendar-btn">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="drag-handle">⠿</div>
+          <button class="btn-secondary" style="flex:1;" onclick="goTo('calendar')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            Ver Calendário e Gráficos
+          </button>
         </div>
       </div>
+
+      <div class="widget-draggable" data-id="widget-glucose-charts">
+        <div class="widget-header-row" style="margin-bottom:10px;">
+          <div class="slabel" style="margin:0;">Métricas por Tag e Horário</div>
+          <div class="drag-handle">⠿</div>
+        </div>
+        <div class="charts-row">
+          <div class="chart-card"><div class="chart-title">Glicose por Tag</div><div style="position:relative;height:180px;"><canvas id="glucose-tag-chart"></canvas></div></div>
+          <div class="chart-card"><div class="chart-title">Glicose por Horário</div><div style="position:relative;height:180px;"><canvas id="glucose-time-chart"></canvas></div></div>
+        </div>
+      </div>
+
+      <div class="widget-draggable" data-id="widget-glucose-tir">
+        <div class="widget-header-row" style="margin-bottom:10px;">
+          <div class="slabel" style="margin:0;">Tempo no Alvo (TIR)</div>
+          <div class="drag-handle">⠿</div>
+        </div>
+        <div class="tir-card">
+          <div class="tir-toggle">
+            <button class="tir-btn active" id="btn-tir-daily" onclick="setTIRMode('daily')">Hoje</button>
+            <button class="tir-btn" id="btn-tir-90d" onclick="setTIRMode('90d')">90 Dias</button>
+          </div>
+          <div class="tir-header"><span>Meta: &gt;70% na faixa</span><span id="tir-total-readings" style="color:var(--text);font-weight:800;">0 medições</span></div>
+          <div class="tir-bar">
+            <div id="tir-low" class="tir-seg low" style="width:0%"></div>
+            <div id="tir-norm" class="tir-seg normal" style="width:0%"></div>
+            <div id="tir-high" class="tir-seg high" style="width:0%"></div>
+          </div>
+          <div class="tir-stats">
+            <div class="tir-stat"><div class="tir-dot low"></div> Baixo <span id="tirl-low">0%</span></div>
+            <div class="tir-stat"><div class="tir-dot normal"></div> No Alvo <span id="tirl-norm">0%</span></div>
+            <div class="tir-stat"><div class="tir-dot high"></div> Alto <span id="tirl-high">0%</span></div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
   <button class="fab-save" onclick="saveGlucose()">
@@ -687,17 +738,15 @@ select.modern-sel option { background-color: var(--bg2); color: var(--text); fon
 
 <div id="screen-study" class="screen">
   <div class="screen-header"><div class="screen-title">Estudos & Foco</div></div>
-  <div class="scontent" style="position:relative;">
+  <div class="cal-content" style="position:relative;">
     
     <div id="exam-tooltip" style="display:none; position:absolute; background:var(--bg2); border:1px solid var(--amber); padding:12px; border-radius:12px; z-index:100; box-shadow:0 8px 24px rgba(0,0,0,0.5); color:var(--text); font-size:12px; max-width:220px; transition:opacity 0.2s;"></div>
 
     <div class="cal-layout">
       <div class="cal-left">
         <div class="slabel" style="margin-bottom:10px;">📅 Calendário de Provas</div>
-        <div class="chart-card" style="padding:14px; margin-bottom:20px;">
-          <div class="cal-header"><button class="cal-btn" onclick="changeSMonth(-1)">❮</button><div class="cal-title" id="s-cal-month-label">Mês Ano</div><button class="cal-btn" onclick="changeSMonth(1)">❯</button></div>
-          <div class="cal-grid" id="s-cal-grid" style="margin-bottom:0; border:none; padding:0; background:transparent; box-shadow:none;"></div>
-        </div>
+        <div class="cal-header"><button class="cal-btn" onclick="changeSMonth(-1)">❮</button><div class="cal-title" id="s-cal-month-label">Mês Ano</div><button class="cal-btn" onclick="changeSMonth(1)">❯</button></div>
+        <div class="cal-grid" id="s-cal-grid" style="margin-bottom:20px;"></div>
 
         <div class="slabel">🍅 Foco (Editável)</div>
         <div class="pomodoro-wrap">
@@ -725,6 +774,12 @@ select.modern-sel option { background-color: var(--bg2); color: var(--text); fon
           </div>
           <div style="position:relative;height:180px;"><canvas id="study-chart"></canvas></div>
         </div>
+
+        <div class="slabel" style="margin-top:20px;">📅 Minha Grade</div>
+        <div class="sched-widget" style="padding:14px;">
+           <div id="study-schedule-grid"><div class="empty-state">Nenhuma aula cadastrada.</div></div>
+        </div>
+
       </div>
       
       <div class="cal-right">
@@ -954,7 +1009,18 @@ let syncDebounceTimer=null,lastLocalUpdate=0;
 const SYNC_DELAY=1200;
 
 function safeKey(k){return String(k).replace(/[\.\#\$\/\[\]]/g,'-');}
-function getSafeDate(d){if(!d)d=new Date();return d.toLocaleDateString('pt-BR').replace(/\//g,'-');}
+
+// Garante o formato estrito DD-MM-YYYY (que usamos nas chaves) e DD/MM/YYYY no display
+function getSafeDate(d){
+  if(!d) d = new Date();
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const yyyy = d.getFullYear();
+  return `${dd}-${mm}-${yyyy}`;
+}
+function displayDate(safeDateStr) {
+  return safeDateStr.replace(/-/g, '/');
+}
 
 let userNotes = localStorage.getItem('v_notes') || '';
 let globalDateStr = getSafeDate(new Date());
@@ -963,7 +1029,7 @@ let ginput='',selMeal='',sleepDelay=15,insulinAlarmType='normal';
 let basalDose = localStorage.getItem('v_basal_dose') || '0';
 
 let gReadings=JSON.parse(localStorage.getItem('v_glucose')||'[]');
-if(!Array.isArray(gReadings)) gReadings = []; // Blindagem
+if(!Array.isArray(gReadings)) gReadings = []; 
 
 let iLog=JSON.parse(localStorage.getItem('v_insulin')||'[]');
 if(!Array.isArray(iLog)) iLog = [];
@@ -973,7 +1039,7 @@ let curTheme=localStorage.getItem('v_theme')||'dark';
 let currentTIRMode='daily';
 let calDate=new Date(),selectedCalDate=globalDateStr;
 let wCalDate=new Date(),wSelectedDateStr=globalDateStr;
-let sCalDate=new Date(); // Data do Calendario de Estudos
+let sCalDate=new Date(); 
 let wProfiles={};
 let rawProf=JSON.parse(localStorage.getItem('v_workout_profiles')||'{}');
 for(let k in rawProf)wProfiles[safeKey(k)]=rawProf[k];
@@ -997,7 +1063,7 @@ let dLog={};
 let rawD=JSON.parse(localStorage.getItem('v_diet_log')||'{}');
 for(let k in rawD) {
   let val = rawD[k];
-  if(val && !Array.isArray(val.items)) val.items = []; // Blindagem de objeto vazio no Firebase
+  if(val && !Array.isArray(val.items)) val.items = []; 
   dLog[safeKey(k)]=val;
 }
 
@@ -1006,7 +1072,7 @@ let protLog={};
 let rawP=JSON.parse(localStorage.getItem('v_prot_log')||'{}');
 for(let k in rawP) {
   let val = rawP[k];
-  if(val && !Array.isArray(val.items)) val.items = []; // Blindagem
+  if(val && !Array.isArray(val.items)) val.items = []; 
   protLog[safeKey(k)]=val;
 }
 
@@ -1026,11 +1092,85 @@ let pomoInterval=null;
 let pomoTime=1500; 
 let isPomoRunning=false;
 let studyChartDateOffset = 0; 
-let activeSubDays = []; // Dias ativos na edição da matéria
+let activeSubDays = []; 
 
 let editDateIndex=-1;
 let editSubjectIndex=-1;
 let weightChart=null,loadChart=null, gTagChart=null, gTimeChart=null, studyChart=null;
+
+// ═══════════════════════════════════════════════════════════
+// SORTABLE JS (DRAG & DROP)
+// ═══════════════════════════════════════════════════════════
+function saveWidgetOrder() {
+  const save = (containerId, storageKey) => {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const order = Array.from(container.children)
+      .filter(w => w.classList.contains('widget-draggable'))
+      .map(w => w.getAttribute('data-id'));
+    localStorage.setItem(storageKey, JSON.stringify(order));
+  };
+  save('home-sortable-left', 'v_widget_order_home_left');
+  save('home-sortable-right', 'v_widget_order_home_right');
+  save('glucose-sortable', 'v_widget_order_glucose');
+}
+
+function restoreHomeWidgets() {
+  const leftContainer = document.getElementById('home-sortable-left');
+  const rightContainer = document.getElementById('home-sortable-right');
+  if(!leftContainer || !rightContainer) return;
+
+  const savedLeft = JSON.parse(localStorage.getItem('v_widget_order_home_left') || 'null');
+  const savedRight = JSON.parse(localStorage.getItem('v_widget_order_home_right') || 'null');
+  if(!savedLeft && !savedRight) return; 
+
+  const allWidgets = {};
+  document.querySelectorAll('#screen-home .widget-draggable').forEach(w => {
+     allWidgets[w.getAttribute('data-id')] = w;
+  });
+
+  if(savedLeft) savedLeft.forEach(id => { if(allWidgets[id]) leftContainer.appendChild(allWidgets[id]); delete allWidgets[id]; });
+  if(savedRight) savedRight.forEach(id => { if(allWidgets[id]) rightContainer.appendChild(allWidgets[id]); delete allWidgets[id]; });
+
+  Object.values(allWidgets).forEach(w => leftContainer.appendChild(w));
+}
+
+function restoreGlucoseWidgets() {
+  const container = document.getElementById('glucose-sortable');
+  if(!container) return;
+  const saved = JSON.parse(localStorage.getItem('v_widget_order_glucose') || 'null');
+  if(!saved) return;
+
+  const allWidgets = {};
+  container.querySelectorAll('.widget-draggable').forEach(w => {
+     allWidgets[w.getAttribute('data-id')] = w;
+  });
+
+  saved.forEach(id => { if(allWidgets[id]) container.appendChild(allWidgets[id]); delete allWidgets[id]; });
+  Object.values(allWidgets).forEach(w => container.appendChild(w));
+}
+
+function initSortable() {
+  if (typeof Sortable === 'undefined') return;
+  
+  restoreHomeWidgets();
+  restoreGlucoseWidgets();
+
+  const homeLeft = document.getElementById('home-sortable-left');
+  const homeRight = document.getElementById('home-sortable-right');
+  const glucose = document.getElementById('glucose-sortable');
+
+  const sortableOptions = {
+    handle: '.drag-handle',
+    animation: 150,
+    ghostClass: 'sortable-ghost',
+    onEnd: saveWidgetOrder
+  };
+
+  if(homeLeft) Sortable.create(homeLeft, { ...sortableOptions, group: 'home' });
+  if(homeRight) Sortable.create(homeRight, { ...sortableOptions, group: 'home' });
+  if(glucose) Sortable.create(glucose, { ...sortableOptions, group: 'glucose' });
+}
 
 // ═══════════════════════════════════════════════════════════
 // SYNC E LOCALSTORAGE
@@ -1076,7 +1216,7 @@ function applyState(data){
     for(let k in raw){
       let e=Array.isArray(raw[k])?{exercises:raw[k]}:raw[k];
       if(e.creatine)delete e.creatine;
-      if(e && !Array.isArray(e.exercises)) e.exercises = []; // Blindagem
+      if(e && !Array.isArray(e.exercises)) e.exercises = [];
       wLog[safeKey(k)]=e;
     }
   }
@@ -1090,7 +1230,7 @@ function applyState(data){
     let raw=data.v_diet_log;dLog={};
     for(let k in raw) {
       let val = raw[k];
-      if(val && !Array.isArray(val.items)) val.items = []; // Blindagem
+      if(val && !Array.isArray(val.items)) val.items = []; 
       dLog[safeKey(k)]=val;
     }
   }
@@ -1100,7 +1240,7 @@ function applyState(data){
     let raw=data.v_prot_log;protLog={};
     for(let k in raw) {
       let val = raw[k];
-      if(val && !Array.isArray(val.items)) val.items = []; // Blindagem
+      if(val && !Array.isArray(val.items)) val.items = []; 
       protLog[safeKey(k)]=val;
     }
   }
@@ -1163,7 +1303,7 @@ dbRef.on('value',(snap)=>{
   const data=snap.val();
   if(data&&data._updated&&data._updated>lastLocalUpdate+1500){applyState(data);saveLocalState();refreshUI();showSync('ok','Sincronizado ✓');lastLocalUpdate=data._updated;}
 });
-  function refreshUI(){
+function refreshUI(){
   updateAllData();
   if(document.getElementById('screen-calendar').classList.contains('active')){renderCalendar();renderCalData();}
   if(document.getElementById('screen-workout').classList.contains('active')){renderWCalendar();renderWData();renderWeightChart();renderLoadChart();}
@@ -1217,13 +1357,14 @@ async function init(){
   setTimeout(()=>overlay.style.display='none',600);
   
   initEtapa1();
+  initSortable();
   refreshUI();
   checkWeightNotification();
 }
 
 function initEtapa1(){
   document.getElementById('settings-notes').value = userNotes;
-  document.getElementById('top-nav-date').textContent = globalDateStr;
+  document.getElementById('top-nav-date').textContent = displayDate(globalDateStr);
 }
 function saveNotes(){ userNotes=document.getElementById('settings-notes').value; persistAll(); }
 function travelToDate(){
@@ -1234,7 +1375,7 @@ function travelToDate(){
 }
 function travelToToday(){ globalDateStr=getSafeDate(new Date()); syncAppToDate(); }
 function syncAppToDate(){
-  document.getElementById('top-nav-date').textContent=globalDateStr;
+  document.getElementById('top-nav-date').textContent=displayDate(globalDateStr);
   wSelectedDateStr=globalDateStr; clSelectedDateStr=globalDateStr; selectedCalDate=globalDateStr;
   document.getElementById('modal-global-date').style.display='none';
   refreshUI();
@@ -1248,7 +1389,7 @@ function updateAllData(){
 }
 
 // ═══════════════════════════════════════════════════════════
-// HOME WIDGETS
+// HOME WIDGETS E GRADE
 // ═══════════════════════════════════════════════════════════
 function updateHomeWidgets(){
   const todayStr=globalDateStr;
@@ -1287,7 +1428,7 @@ function updateHomeWidgets(){
 function renderHomeChecklist(todayStr,gTir,wPct){
   const area=document.getElementById('hc-list-area');
   const dl=document.getElementById('hc-date-label');
-  if(!area)return;if(dl)dl.textContent=todayStr;
+  if(!area)return;if(dl)dl.textContent=displayDate(todayStr);
   let html='';
   const gDone=gTir>=70;
   html+=`<div class="hc-item hc-item-auto ${gDone?'done':''}"><div class="hc-check">${gDone?'✓':''}</div><div style="flex:1;"><div class="hc-label">💉 Glicose no alvo</div><div class="hc-sublabel">${gTir}% na faixa</div></div></div>`;
@@ -1335,41 +1476,52 @@ function renderHomeAbsencesRanking() {
 
 function renderScheduleGrids() {
   const containers = ['home-schedule-grid', 'study-schedule-grid'];
-  const slots = [
+  const allStandardSlots = [
     {label: '15:30\n17:30', timeStr: '15:30 - 17:30'},
     {label: '18:30\n20:30', timeStr: '18:30 - 20:30'},
     {label: '20:30\n22:30', timeStr: '20:30 - 22:30'}
   ];
-  const days = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'];
   
-  // Highlight do dia atual
+  let slots = allStandardSlots.filter(slot => {
+    return studySubjects.some(sub => sub.schedules && sub.schedules.some(sc => sc.time === slot.timeStr));
+  });
+
+  const days = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'];
   const jsDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
   const currentDayName = jsDays[new Date().getDay()];
   
-  let html = '<div class="sched-grid">';
-  html += '<div class="sched-cell sched-header-cell">Horário</div>';
-  days.forEach(d => {
-    let hi = (d === currentDayName) ? 'current-day' : '';
-    html += `<div class="sched-cell sched-header-cell ${hi}">${d}</div>`;
-  });
-  
-  slots.forEach(slot => {
-     html += `<div class="sched-cell" style="background:var(--surface); font-weight:800;">${slot.label.replace('\n','<br>')}</div>`;
+  let html = '';
+  if (slots.length === 0) {
+     html = '<div class="empty-state">Nenhuma matéria registrada na grade.</div>';
+  } else {
+     html = '<div class="sched-grid">';
+     html += '<div class="sched-cell sched-header-cell">Horário</div>';
      days.forEach(d => {
-        let hi = (d === currentDayName) ? 'current-day' : '';
-        const sub = studySubjects.find(s => s.schedules && s.schedules.some(sc => sc.day === d && sc.time === slot.timeStr));
-        if(sub) {
-           html += `<div class="sched-block ${hi}">
-             <div style="font-size:10px;font-weight:900;opacity:0.9;">${sub.code||''}</div>
-             <div style="margin:4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${sub.name}">${sub.name}</div>
-             ${sub.room ? `<div style="margin-top:2px;color:#fff;font-weight:800;font-size:9px;">📍 ${sub.room}</div>` : ''}
-           </div>`;
-        } else {
-           html += `<div class="sched-cell ${hi}"></div>`;
-        }
+       let hi = (d === currentDayName) ? 'current-day' : '';
+       html += `<div class="sched-cell sched-header-cell ${hi}">${d}</div>`;
      });
-  });
-  html += '</div>';
+     
+     slots.forEach(slot => {
+        html += `<div class="sched-cell" style="background:var(--surface); font-weight:800;">${slot.label.replace('\n','<br>')}</div>`;
+        days.forEach(d => {
+           let hi = (d === currentDayName) ? 'current-day' : '';
+           const sub = studySubjects.find(s => s.schedules && s.schedules.some(sc => sc.day === d && sc.time === slot.timeStr));
+           if(sub) {
+              let blockBg = (d === currentDayName) ? 'linear-gradient(135deg, var(--purple), #ff6b9d)' : '#5cb85c';
+              let blockShadow = (d === currentDayName) ? 'rgba(180,127,255,0.4)' : 'rgba(92,184,92,0.3)';
+              
+              html += `<div class="sched-block ${hi}" style="background:${blockBg}; box-shadow:0 2px 8px ${blockShadow};">
+                <div style="font-size:10px;font-weight:900;opacity:0.9;">${sub.code||''}</div>
+                <div style="margin:4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${sub.name}">${sub.name}</div>
+                ${sub.room ? `<div style="margin-top:2px;color:#fff;font-weight:800;font-size:9px;">📍 ${sub.room}</div>` : ''}
+              </div>`;
+           } else {
+              html += `<div class="sched-cell ${hi}"></div>`;
+           }
+        });
+     });
+     html += '</div>';
+  }
 
   containers.forEach(id => {
     const el = document.getElementById(id);
@@ -1479,7 +1631,7 @@ function updateCLMetrics(){
   document.getElementById('cl-val-c').textContent=clPct+'%';document.getElementById('cl-fill-c').style.width=clPct+'%';
 }
 function renderCLData(){
-  document.getElementById('cl-date-label').textContent=clSelectedDateStr;
+  document.getElementById('cl-date-label').textContent=displayDate(clSelectedDateStr);
   const list=document.getElementById('cl-list-area');let html='';
   const gDay=gReadings.filter(r=>r.date===clSelectedDateStr||r.date===clSelectedDateStr.replace(/-/g,'/'));
   let gText='Glicose: Sem dados',gDone=false;
@@ -1497,7 +1649,7 @@ function addCLItem(){const item=prompt("Novo item permanente:");if(item&&item.tr
 function removeCLItem(idx){if(!confirm('Remover item?'))return;clCustom.splice(idx,1);persistAll();renderCLData();}
 
 // ═══════════════════════════════════════════════════════════
-// DIETA E PROTEÍNAS (BLINDADO)
+// DIETA E PROTEÍNAS
 // ═══════════════════════════════════════════════════════════
 function renderDietData(){
   const dd=dLog[wSelectedDateStr]||{goal:defaultDietGoal,items:[]};
@@ -1568,7 +1720,7 @@ function getExPrevLoad(exName){
   return null;
 }
 function renderWData(){
-  document.getElementById('w-date-label').textContent=wSelectedDateStr;
+  document.getElementById('w-date-label').textContent=displayDate(wSelectedDateStr);
   const list=document.getElementById('w-list-area');let html='';
   const wd=wLog[wSelectedDateStr]||{exercises:[]};
   html+=`<div class="slabel">Perfis de Treino</div>`;
@@ -1659,7 +1811,7 @@ function renderLoadChart(){
   loadChart=new Chart(canvas.getContext('2d'),{
     type:'line',
     data:{
-      labels:data.map(e=>e.date.slice(0,5)),
+      labels:data.map(e=>e.date.slice(0,5).replace('-','/')),
       datasets:[{label:'Carga (kg)',data:data.map(e=>e.load),borderColor:'var(--rose)',backgroundColor:'rgba(255,107,157,0.15)',pointBackgroundColor:'var(--rose)',pointRadius:5,tension:0.35,fill:true}]
     },
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(10,10,20,0.85)',titleColor:'#fff',bodyColor:'rgba(255,255,255,0.7)',callbacks:{label:ctx=>' '+ctx.raw+' kg'}}},scales:{x:{grid:{color:gridColor},ticks:{color:textColor,font:{size:9,weight:'700'},maxRotation:0}},y:{grid:{color:gridColor},ticks:{color:textColor,font:{size:9,weight:'700'},callback:v=>v+'kg'}}}}
@@ -1683,7 +1835,7 @@ function updateLastWeightLabel(){
   const el=document.getElementById('last-weight-label');if(!el)return;
   if(weightLog.length===0){el.textContent='Último peso: —';return;}
   const last=weightLog[weightLog.length-1];
-  el.textContent='Último peso: '+last.weight+' kg em '+last.date;
+  el.textContent='Último peso: '+last.weight+' kg em '+displayDate(last.date);
 }
 function renderWeightChart(){
   updateLastWeightLabel();
@@ -1697,7 +1849,7 @@ function renderWeightChart(){
   weightChart=new Chart(canvas.getContext('2d'),{
     type:'line',
     data:{
-      labels:data.map(e=>e.date.slice(0,5)),
+      labels:data.map(e=>e.date.slice(0,5).replace('-','/')),
       datasets:[{label:'Peso (kg)',data:data.map(e=>e.weight),borderColor:'var(--blue)',backgroundColor:'rgba(79,163,255,0.15)',pointBackgroundColor:'var(--blue)',pointRadius:5,tension:0.35,fill:true}]
     },
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(10,10,20,0.85)',titleColor:'#fff',bodyColor:'rgba(255,255,255,0.7)',callbacks:{label:ctx=>' '+ctx.raw+' kg'}}},scales:{x:{grid:{color:gc},ticks:{color:tc,font:{size:9,weight:'700'},maxRotation:0}},y:{grid:{color:gc},ticks:{color:tc,font:{size:9,weight:'700'},callback:v=>v+'kg'}}}}
@@ -1768,12 +1920,15 @@ function openEditDate(i){
 function closeEditDate(){document.getElementById('modal-edit-date').style.display='none';editDateIndex=-1;}
 function saveEditDate(){
   if(editDateIndex<0)return;
-  const dateVal=document.getElementById('edit-date-input').value;
+  const dateVal=document.getElementById('edit-date-input').value; // Retorna YYYY-MM-DD
   const timeVal=document.getElementById('edit-time-input').value;
   const valInput=parseFloat(document.getElementById('edit-val-input').value);
   const tagInput=document.getElementById('edit-tag-input').value;
   if(!dateVal || !valInput)return;
-  const d=new Date(dateVal+'T12:00:00');
+  
+  const parts = dateVal.split('-');
+  const d = new Date(parts[0], parts[1]-1, parts[2]); 
+  
   gReadings[editDateIndex].date=getSafeDate(d);
   if(timeVal)gReadings[editDateIndex].time=timeVal;
   gReadings[editDateIndex].value=valInput;
@@ -1786,7 +1941,7 @@ function renderTable(){
   if(!gReadings || gReadings.length===0){tb.innerHTML='<tr><td colspan="5" style="text-align:center;padding:12px;color:var(--text-d);">Vazio</td></tr>';return;}
   tb.innerHTML=gReadings.map((r,i)=>{
     const h=gcHex(r.value);const tag=r.meal==='Sem Tag'?'':`#${r.meal.toLowerCase().replace(/ /g,'-')}`;
-    return `<tr><td>${r.date.slice(0,5)}</td><td>${r.time}</td><td><span class="vchip" style="background:${h}22;color:${h};border:1px solid ${h}55;">${r.value}</span></td><td style="color:var(--blue);font-size:10px;font-weight:700;">${tag}</td><td style="text-align:right;"><span class="edit-btn" onclick="openEditDate(${i})">✎</span><span class="del-btn" onclick="delReading(${i})">✕</span></td></tr>`;
+    return `<tr><td>${r.date.slice(0,5).replace('-','/')}</td><td>${r.time}</td><td><span class="vchip" style="background:${h}22;color:${h};border:1px solid ${h}55;">${r.value}</span></td><td style="color:var(--blue);font-size:10px;font-weight:700;">${tag}</td><td style="text-align:right;"><span class="edit-btn" onclick="openEditDate(${i})">✎</span><span class="del-btn" onclick="delReading(${i})">✕</span></td></tr>`;
   }).join('');
 }
 function calcHba1c(){if(!gReadings||gReadings.length<3)return null;const avg=gReadings.reduce((a,b)=>a+b.value,0)/gReadings.length;return(avg+46.7)/28.7;}
@@ -1886,7 +2041,7 @@ function editBasalDose(e) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// ESTUDOS, POMODORO E GRADE
+// ESTUDOS E POMODORO
 // ═══════════════════════════════════════════════════════════
 function renderSubjects() {
   const list = document.getElementById('study-subjects-list');
@@ -1934,7 +2089,13 @@ function renderSubjects() {
         } else {
           gradeHtml = `<span style="font-size:10px;color:var(--text-m);font-weight:700;">Em breve</span>`;
         }
-        let formattedDate = ex.date ? ex.date.split('-').reverse().join('/') : '--';
+        
+        let formattedDate = '--';
+        if (ex.date) {
+            let p = ex.date.split('-'); 
+            if(p.length === 3) formattedDate = `${p[2]}/${p[1]}/${p[0]}`;
+        }
+
         html += `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:12px;font-weight:700;">
           <span style="color:var(--text);">Prova ${idx+1} (${formattedDate})</span>
           ${gradeHtml}
@@ -2273,7 +2434,7 @@ function renderSCalendar(){
   for(let i=1;i<=dm;i++){
     let isoDate = `${yr}-${pad(mo+1)}-${pad(i)}`; 
     let hasExam = examMap[isoDate] ? true : false;
-    let examText = hasExam ? examMap[isoDate].join('<br>') : ''; // Usa <br> para múltiplas provas
+    let examText = hasExam ? examMap[isoDate].join('<br>') : ''; 
     
     let onClickAction = hasExam ? `showExamTooltip('${examText}', event)` : '';
     
@@ -2301,11 +2462,17 @@ function renderCalendar(){
   const g=document.getElementById('cal-grid');g.innerHTML='';
   ['D','S','T','Q','Q','S','S'].forEach(d=>g.innerHTML+=`<div class="cal-dw">${d}</div>`);
   for(let i=0;i<fd;i++)g.innerHTML+=`<div class="cal-day empty"></div>`;
-  for(let i=1;i<=dm;i++){const ds=getSafeDate(new Date(yr,mo,i));const hd=gReadings.some(r=>r.date===ds||r.date===new Date(yr,mo,i).toLocaleDateString('pt-BR'));const sel=ds===selectedCalDate?'sel':'';g.innerHTML+=`<div class="cal-day ${sel} ${hd?'has-data':''}" onclick="selectCalDay('${ds}')">${i}</div>`;}
+  for(let i=1;i<=dm;i++){
+    const ds=getSafeDate(new Date(yr,mo,i));
+    const dIso=ds.split('-').reverse().join('-');
+    const hd=gReadings.some(r=>r.date===ds||r.date===dIso||r.date===new Date(yr,mo,i).toLocaleDateString('pt-BR'));
+    const sel=ds===selectedCalDate?'sel':'';
+    g.innerHTML+=`<div class="cal-day ${sel} ${hd?'has-data':''}" onclick="selectCalDay('${ds}')">${i}</div>`;
+  }
 }
 function selectCalDay(ds){selectedCalDate=ds;renderCalendar();renderCalData();}
 function renderCalData(){
-  document.getElementById('chart-date-label').textContent=selectedCalDate;
+  document.getElementById('chart-date-label').textContent=displayDate(selectedCalDate);
   const list=document.getElementById('cal-readings'),chartArea=document.getElementById('cal-chart-area');
   const rows=gReadings.filter(r=>r.date===selectedCalDate||r.date===selectedCalDate.replace(/-/g,'/')).slice().reverse();
   if(rows.length===0){list.innerHTML='<div class="empty-state">Nenhuma medição nesta data</div>';chartArea.innerHTML='<div class="empty-state" style="margin:auto;">Sem dados</div>';return;}
