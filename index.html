@@ -373,7 +373,6 @@ select.modern-sel option { background-color: var(--bg2); color: var(--text); fon
 .grade-r{color:var(--red);font-weight:800;}
 .pomodoro-wrap{display:flex;flex-direction:column;align-items:center;padding:20px;background:var(--glass);border:1px solid var(--glass-b);border-radius:var(--radius);margin-bottom:14px;}
 
-/* NOVOS BOTÕES ESTUDO E INPUT DE POMODORO */
 .pomo-timer-row { display:flex; align-items:center; justify-content:center; font-size:56px; font-weight:800; letter-spacing:-2px; margin:10px 0; color:var(--text); }
 .pomo-in { background:transparent; border:none; color:var(--text); font-size:56px; font-weight:800; font-family:inherit; width:85px; text-align:right; outline:none; padding:0; transition:0.2s;}
 .pomo-in:focus { color:var(--amber); }
@@ -398,15 +397,29 @@ select.modern-sel option { background-color: var(--bg2); color: var(--text); fon
 .dash-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: start; }
 @media(max-width: 700px) { .dash-grid { grid-template-columns: 1fr; } }
 .dash-col { display: flex; flex-direction: column; gap: 14px; }
-.dash-widget { background: var(--glass); border: 1px solid var(--glass-b); border-radius: var(--radius); padding: 16px; backdrop-filter: blur(12px); cursor: pointer; transition: transform 0.2s; position: relative; overflow: hidden; }
-.dash-widget:active { transform: scale(0.97); background: var(--surface-h); }
-.dw-title { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+.dash-widget { background: var(--glass); border: 1px solid var(--glass-b); border-radius: var(--radius); padding: 16px; backdrop-filter: blur(12px); position: relative; }
+.dw-header { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+.dw-header a { font-size: 10px; color: var(--blue); cursor: pointer; text-decoration: none; background: rgba(79,163,255,.1); padding: 4px 8px; border-radius: 6px; }
+.dw-header a:active { background: rgba(79,163,255,.2); }
 .dw-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-.dw-table th { text-align: left; color: var(--blue); border-bottom: 1px solid var(--glass-b); padding-bottom: 6px; }
+.dw-table th { text-align: left; color: var(--text-m); border-bottom: 1px solid var(--glass-b); padding-bottom: 6px; font-weight: 700; }
 .dw-table td { padding: 6px 0; border-bottom: 1px solid var(--divider); color: var(--text); }
 .dw-val { font-size: 28px; font-weight: 800; }
 .dw-sub { font-size: 10px; color: var(--text-m); font-weight: 700; margin-top: 4px; }
-.dw-add-btn { position: absolute; bottom: 12px; right: 12px; background: var(--surface-h); border: 1px solid var(--glass-b); color: var(--text); width: 28px; height: 28px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-weight: 800; font-size: 18px; }
+.dash-input-row { display: flex; gap: 6px; margin-top: 10px; align-items: center; }
+.dash-input { background: var(--input-bg); border: 1px solid var(--glass-b); color: var(--text); padding: 8px 10px; border-radius: 8px; font-size: 11px; outline: none; flex: 1; font-family: inherit; font-weight: 600; }
+.dash-input:focus { border-color: var(--amber); }
+.dash-add-btn { background: var(--amber); color: white; border: none; border-radius: 8px; width: 34px; height: 34px; display: flex; justify-content: center; align-items: center; font-weight: 800; font-size: 18px; cursor: pointer; transition: 0.2s; flex-shrink:0; }
+.dash-add-btn:active { transform: scale(0.9); }
+
+/* MINI CALENDAR DASHBOARD */
+.dash-mini-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; margin-top: 8px; }
+.dash-mini-dw { font-size: 9px; font-weight: 800; color: var(--text-m); margin-bottom: 4px; }
+.dash-mini-day { font-size: 11px; font-weight: 600; padding: 6px 0; border-radius: 6px; cursor: pointer; color: var(--text); border: 1px solid transparent; }
+.dash-mini-day:active { background: var(--surface-h); }
+.dash-mini-day.today { background: var(--blue); color: white; font-weight: 800; box-shadow: 0 2px 8px rgba(79,163,255,.4); }
+.dash-mini-day.has-data { border-color: var(--glass-b); position: relative; }
+.dash-mini-day.has-data::after { content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); width: 3px; height: 3px; background: var(--rose); border-radius: 50%; }
 </style>
 </head>
 <body data-theme="dark">
@@ -453,61 +466,86 @@ select.modern-sel option { background-color: var(--bg2); color: var(--text); fon
   <div class="dash-wrapper">
     <div class="dash-grid">
       <div class="dash-col">
-        <div class="dash-widget" onclick="goTo('calendar')">
-          <div class="dw-title" style="color:var(--blue);">Calendário</div>
-          <div id="dash-cal-preview" style="font-size:12px;color:var(--text-m);min-height:100px;">Toque para ver o calendário e gráficos...</div>
+        <div class="dash-widget">
+          <div class="dw-header"><span>Calendário</span><a onclick="goTo('calendar')">Abrir ↗</a></div>
+          <div class="cal-header" style="padding:0; margin-bottom:8px; border:none; background:transparent;">
+            <button class="cal-btn" style="width:24px;height:24px;" onclick="changeDashMonth(-1)">❮</button>
+            <div class="cal-title" id="dash-cal-month" style="font-size:12px;">Mês Ano</div>
+            <button class="cal-btn" style="width:24px;height:24px;" onclick="changeDashMonth(1)">❯</button>
+          </div>
+          <div class="dash-mini-cal" id="dash-mini-cal-grid">
+            </div>
         </div>
         
-        <div class="dash-widget" onclick="goTo('checklist')" style="flex:1;">
-          <div class="dw-title" style="color:var(--teal);">Checklist</div>
+        <div class="dash-widget" style="flex:1;">
+          <div class="dw-header"><span>Checklist</span><a onclick="goTo('checklist')">Abrir ↗</a></div>
           <table class="dw-table">
             <thead><tr><th>DATA</th><th>ATIVIDADE</th></tr></thead>
             <tbody id="dash-checklist-body">
               <tr><td colspan="2" style="text-align:center;padding-top:10px;">Carregando...</td></tr>
             </tbody>
           </table>
-          <div class="dw-add-btn" onclick="event.stopPropagation(); goTo('checklist');">+</div>
+          <div class="dash-input-row">
+            <input type="text" id="dash-cl-input" class="dash-input" placeholder="Nova atividade para hoje...">
+            <button class="dash-add-btn" onclick="addDashChecklist()">+</button>
+          </div>
         </div>
       </div>
       
       <div class="dash-col">
-        <div class="dash-widget" onclick="goTo('home')">
-          <div class="dw-title" style="color:var(--purple);">Porcentagem Diária</div>
-          <div class="dw-val" id="dash-pct-day">0%</div>
+        <div style="display:flex;gap:14px;">
+          <div class="dash-widget" style="flex:1;">
+            <div class="dw-header" style="color:var(--purple);"><span>Dia</span></div>
+            <div class="dw-val" id="dash-pct-day">0%</div>
+          </div>
+          <div class="dash-widget" style="flex:1;">
+            <div class="dw-header" style="color:var(--purple);"><span>Semana</span></div>
+            <div class="dw-val" id="dash-pct-week">0%</div>
+          </div>
         </div>
         
-        <div class="dash-widget" onclick="goTo('home')">
-          <div class="dw-title" style="color:var(--purple);">Porcentagem Semanal</div>
-          <div class="dw-val" id="dash-pct-week">0%</div>
-        </div>
-        
-        <div class="dash-widget" onclick="goTo('workout')">
-          <div class="dw-title" style="color:var(--amber);">Refeições</div>
+        <div class="dash-widget">
+          <div class="dw-header"><span style="color:var(--amber);">Refeições</span><a onclick="goTo('workout')">Abrir ↗</a></div>
           <div style="font-size:10px;font-weight:700;color:var(--blue);margin-bottom:8px;border-bottom:1px solid var(--glass-b);padding-bottom:4px;display:flex;justify-content:space-between;">
             <span style="flex:2;">REFEIÇÃO</span>
             <span style="flex:1;text-align:center;">KCAL</span>
             <span style="flex:1;text-align:right;">PROT.</span>
           </div>
           <div id="dash-meals-body" style="font-size:12px;color:var(--text);margin-bottom:14px;min-height:50px;">
-            Sem refeições.
+            Carregando...
           </div>
-          <div class="dw-add-btn" onclick="event.stopPropagation(); goTo('workout');">+</div>
-        </div>
-        
-        <div class="dash-widget" onclick="goTo('workout')">
-          <div class="dw-title" style="color:var(--rose);">Treino Hoje</div>
-          <div id="dash-workout-body" style="font-size:12px;color:var(--text-m);min-height:50px;">
-            Descanso ou treino não planejado.
+          <div style="display:flex; align-items:center; gap:6px; background:var(--input-bg); border:1px solid var(--glass-b); border-radius:8px; padding:4px;">
+            <input type="text" id="dash-diet-meal" placeholder="Prato consumido..." style="background:transparent; border:none; color:var(--text); font-size:11px; flex:1; outline:none; padding:4px; font-weight:600;">
+            <input type="number" id="dash-diet-kcal" placeholder="Kcal" style="background:var(--surface-h); border:1px solid var(--glass-b); color:var(--text); border-radius:6px; font-size:11px; width:55px; outline:none; padding:4px; text-align:center;">
+            <input type="time" id="dash-diet-time" style="background:var(--surface-h); border:1px solid var(--glass-b); color:var(--text); border-radius:6px; font-size:11px; outline:none; padding:4px;">
+            <button style="background:var(--amber); color:white; border:none; border-radius:6px; width:28px; height:28px; font-weight:800; cursor:pointer;" onclick="addDashMeal()">+</button>
           </div>
         </div>
         
-        <div class="dash-widget" onclick="goTo('glucose')">
-          <div class="dw-title" style="color:var(--teal);">Glicose</div>
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div class="dw-val" id="dash-glucose-val">--</div>
-            <div class="dw-sub" id="dash-glucose-time">Última medição</div>
+        <div class="dash-widget">
+          <div class="dw-header"><span style="color:var(--teal);">Glicose</span><a onclick="goTo('glucose')">Abrir ↗</a></div>
+          <table class="dw-table" style="margin-bottom:14px;">
+            <thead><tr><th>HORA</th><th>MG/DL</th><th>TAG</th></tr></thead>
+            <tbody id="dash-glucose-body">
+               <tr><td colspan="3" style="text-align:center;">Carregando...</td></tr>
+            </tbody>
+          </table>
+          <div style="display:flex; align-items:center; gap:6px; background:var(--input-bg); border:1px solid var(--glass-b); border-radius:8px; padding:4px;">
+             <input type="number" id="dash-g-val" placeholder="mg/dL" style="background:transparent; border:none; color:var(--text); font-size:11px; flex:1; outline:none; padding:4px; font-weight:800;">
+             <select id="dash-g-tag" style="background:var(--surface-h); border:1px solid var(--glass-b); color:var(--text); border-radius:6px; font-size:10px; outline:none; padding:4px; max-width:85px; font-weight:700;">
+               <option value="Jejum">#jejum</option>
+               <option value="Pré-Café">#pré-café</option>
+               <option value="Pós-Café">#pós-café</option>
+               <option value="Pré-Almoço">#pré-almoço</option>
+               <option value="Pós-Almoço">#pós-almoço</option>
+               <option value="Pré-Janta">#pré-janta</option>
+               <option value="Pós-Janta">#pós-janta</option>
+             </select>
+             <input type="time" id="dash-g-time" style="background:var(--surface-h); border:1px solid var(--glass-b); color:var(--text); border-radius:6px; font-size:11px; outline:none; padding:4px;">
+             <button style="background:var(--teal); color:white; border:none; border-radius:6px; width:28px; height:28px; font-weight:800; cursor:pointer;" onclick="addDashGlucose()">+</button>
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -1056,6 +1094,7 @@ let currentTIRMode='daily';
 let calDate=new Date(),selectedCalDate=globalDateStr;
 let wCalDate=new Date(),wSelectedDateStr=globalDateStr;
 let sCalDate=new Date(); 
+let dashCalDate=new Date(); // Data do mini-calendario do Dashboard
 let wProfiles={};
 let rawProf=JSON.parse(localStorage.getItem('v_workout_profiles')||'{}');
 for(let k in rawProf)wProfiles[safeKey(k)]=rawProf[k];
@@ -1272,6 +1311,8 @@ async function init(){
   document.getElementById('ialarm-time').value=iAlarm.time;
   document.getElementById('diet-time').value=pad(now.getHours())+':'+pad(now.getMinutes());
   document.getElementById('prot-time').value=pad(now.getHours())+':'+pad(now.getMinutes());
+  document.getElementById('dash-diet-time').value=pad(now.getHours())+':'+pad(now.getMinutes());
+  document.getElementById('dash-g-time').value=pad(now.getHours())+':'+pad(now.getMinutes());
   setAType(iAlarm.type,null,true);
   updatePomoInput();
   
@@ -1310,6 +1351,13 @@ function initEtapa1(){
   document.getElementById('top-nav-date').textContent = globalDateStr;
 }
 function saveNotes(){ userNotes=document.getElementById('settings-notes').value; persistAll(); }
+function travelToDateStr(ds) {
+  const parts = ds.split('-');
+  if(parts.length === 3) {
+      document.getElementById('global-date-input').value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+      travelToDate();
+  }
+}
 function travelToDate(){
   let dVal=document.getElementById('global-date-input').value;
   if(!dVal)return;
@@ -1332,45 +1380,37 @@ function updateAllData(){
 }
 
 // ═══════════════════════════════════════════════════════════
-// HOME WIDGETS E DASHBOARD
+// DASHBOARD INTERATIVO
 // ═══════════════════════════════════════════════════════════
-function updateHomeWidgets(){
-  const todayStr=globalDateStr;
-  const gDay=gReadings.filter(r=>r.date===todayStr||r.date===todayStr.replace(/-/g,'/'));
-  let gTir=0;if(gDay.length>0){let ir=gDay.filter(r=>r.value>=70&&r.value<=139).length;gTir=Math.round((ir/gDay.length)*100);}
-  document.getElementById('wm-val-g').textContent=gTir+'%';
-  document.getElementById('wm-fill-g').style.width=gTir+'%';
+function changeDashMonth(d) {
+  dashCalDate.setMonth(dashCalDate.getMonth() + d);
+  renderDashCalendar();
+}
+
+function renderDashCalendar() {
+  const yr = dashCalDate.getFullYear(), mo = dashCalDate.getMonth();
+  const lbl = document.getElementById('dash-cal-month');
+  if(lbl) lbl.textContent = new Date(yr, mo, 1).toLocaleDateString('pt-BR', {month:'long', year:'numeric'});
   
-  const wDay=wLog[todayStr];let wPct=0;
-  if(wDay&&wDay.exercises&&wDay.exercises.length>0){let done=wDay.exercises.filter(ex=>ex.done).length;wPct=Math.round((done/wDay.exercises.length)*100);}
-  document.getElementById('wm-val-w').textContent=wPct+'%';
-  document.getElementById('wm-fill-w').style.width=wPct+'%';
-  
-  let clTotal=2+clCustom.length,clDone=0;
-  if(gTir>=70)clDone++;
-  if(wPct===100&&wDay&&wDay.exercises&&wDay.exercises.length>0)clDone++;
-  if(clLog[todayStr])clCustom.forEach(it=>{if(clLog[todayStr][it])clDone++;});
-  let clPct=Math.round((clDone/clTotal)*100);
-  document.getElementById('wm-val-c').textContent=clPct+'%';
-  document.getElementById('wm-fill-c').style.width=clPct+'%';
-  
-  const dDay=dLog[todayStr]||{goal:defaultDietGoal,items:[]};
-  let totalKcal= (Array.isArray(dDay.items)?dDay.items:[]).reduce((s,it)=>s+parseInt(it.kcal||0),0);
-  let dPct=Math.min(100,Math.round((totalKcal/dDay.goal)*100));
-  document.getElementById('wm-val-d').textContent=totalKcal+' / '+dDay.goal+' ('+dPct+'%)';
-  document.getElementById('wm-fill-d').style.width=dPct+'%';
-  
-  const nota=Math.round(gTir*0.40+wPct*0.25+clPct*0.20+dPct*0.15);
-  const ngEl=document.getElementById('ng-val');if(ngEl)ngEl.textContent=nota+'%';
-  
-  renderHomeChecklist(todayStr,gTir,wPct);
-  renderHomeAbsencesRanking();
-  renderScheduleGrids();
+  const fd = new Date(yr, mo, 1).getDay(), dm = new Date(yr, mo + 1, 0).getDate();
+  const g = document.getElementById('dash-mini-cal-grid');
+  if(!g) return;
+  g.innerHTML = '';
+  ['D','S','T','Q','Q','S','S'].forEach(d => g.innerHTML += `<div class="dash-mini-dw">${d}</div>`);
+  for(let i=0; i<fd; i++) g.innerHTML += `<div></div>`;
+  for(let i=1; i<=dm; i++) {
+    const ds = getSafeDate(new Date(yr, mo, i));
+    // Check if there is data
+    const hd = gReadings.some(r => r.date === ds) || (wLog[ds] && wLog[ds].exercises && wLog[ds].exercises.length > 0);
+    const isToday = ds === globalDateStr;
+    g.innerHTML += `<div class="dash-mini-day ${isToday ? 'today' : ''} ${hd ? 'has-data' : ''}" onclick="goTo('calendar'); travelToDateStr('${ds}')">${i}</div>`;
+  }
 }
 
 function renderDashboard() {
   const todayStr = globalDateStr;
-
+  
+  // Percentuais Dia/Semana
   const gDay = gReadings.filter(r=>r.date===todayStr||r.date===todayStr.replace(/-/g,'/'));
   let gTir=0;if(gDay.length>0){let ir=gDay.filter(r=>r.value>=70&&r.value<=139).length;gTir=Math.round((ir/gDay.length)*100);}
   const wDay = wLog[todayStr];let wPct=0;
@@ -1408,64 +1448,178 @@ function renderDashboard() {
   const elPctWeek = document.getElementById('dash-pct-week');
   if(elPctWeek) elPctWeek.textContent = Math.round(sumWeek/7) + '%';
 
+  // Checklist Editável
   const dashChecklist = document.getElementById('dash-checklist-body');
   if(dashChecklist) {
      let html = '';
-     clCustom.slice(0,5).forEach(item => {
-        const isDone = clLog[todayStr]&&clLog[todayStr][item];
-        html += `<tr><td>${todayStr.slice(0,5)}</td><td style="${isDone?'text-decoration:line-through;color:var(--text-d);':''}">${item}</td></tr>`;
+     clCustom.forEach((item, idx) => {
+        const isDone = clLog[todayStr] && clLog[todayStr][item];
+        html += `<tr style="cursor:pointer;" onclick="toggleDashCLItem('${item}')">
+          <td style="width:30px;text-align:center;">
+            <div style="width:16px;height:16px;border-radius:4px;border:2px solid var(--glass-b);background:${isDone?'var(--teal)':'transparent'};color:white;display:flex;align-items:center;justify-content:center;font-size:10px;">${isDone?'✓':''}</div>
+          </td>
+          <td style="${isDone?'text-decoration:line-through;color:var(--text-d);':''}">${item}</td>
+        </tr>`;
      });
      if(!html) html = '<tr><td colspan="2" style="text-align:center;">Vazio</td></tr>';
      dashChecklist.innerHTML = html;
   }
 
+  // Refeições (Semelhante à Imagem)
   const dashMeals = document.getElementById('dash-meals-body');
   if(dashMeals) {
      let html = '';
      let ddList = dDay.items || [];
-     let ppList = protLog[todayStr]?.items || [];
      
-     ddList.slice(0,3).forEach(m => {
-        html += `<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--divider);padding:4px 0;">
+     ddList.forEach((m, i) => {
+        html += `<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--divider);padding:6px 0;align-items:center;">
           <span style="flex:2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.meal}</span>
-          <span style="flex:1;text-align:center;color:var(--amber);font-weight:800;">${m.kcal}</span>
-          <span style="flex:1;text-align:right;color:var(--text-d);">-</span>
-        </div>`;
-     });
-     ppList.slice(0,3).forEach(m => {
-        html += `<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--divider);padding:4px 0;">
-          <span style="flex:2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.meal}</span>
-          <span style="flex:1;text-align:center;color:var(--text-d);">-</span>
-          <span style="flex:1;text-align:right;color:var(--teal);font-weight:800;">${m.qty}g</span>
+          <span style="flex:1;text-align:center;color:var(--amber);font-weight:800;">${m.kcal} kcal</span>
+          <span style="flex:1;text-align:right;color:var(--text-d);">${m.time}</span>
+          <span class="del-btn" style="padding:0 0 0 8px;font-size:10px;" onclick="delDashMeal(${i})">✕</span>
         </div>`;
      });
      if(!html) html = '<div class="empty-state" style="padding:4px 0;">Nenhuma refeição registrada.</div>';
      dashMeals.innerHTML = html;
   }
 
-  const dashWorkout = document.getElementById('dash-workout-body');
-  if(dashWorkout) {
-     if(wDay&&wDay.exercises&&wDay.exercises.length>0) {
-        dashWorkout.innerHTML = wDay.exercises.map(ex => `<div style="${ex.done?'text-decoration:line-through;opacity:0.5;':''}margin-bottom:4px;font-weight:700;color:var(--text);">• ${ex.name || 'Exercício'}</div>`).join('');
-     } else {
-        dashWorkout.innerHTML = 'Descanso ou treino não planejado.';
-     }
+  // Glicose Tabela (Cores)
+  const dashGlucose = document.getElementById('dash-glucose-body');
+  if(dashGlucose) {
+     let html = '';
+     gDay.forEach((r, i) => {
+        let color = 'var(--green)';
+        if(r.value < 70) color = 'var(--amber)';
+        else if(r.value > 139) color = 'var(--red)';
+        
+        const tag = r.meal === 'Sem Tag' ? '' : `#${r.meal.toLowerCase()}`;
+        html += `<tr>
+          <td>${r.time}</td>
+          <td style="color:${color};font-weight:800;">${r.value}</td>
+          <td style="color:var(--text-m);font-size:9px;">${tag}</td>
+        </tr>`;
+     });
+     if(!html) html = '<tr><td colspan="3" style="text-align:center;">Sem medições hoje.</td></tr>';
+     dashGlucose.innerHTML = html;
   }
 
-  const valEl = document.getElementById('dash-glucose-val');
-  const timeEl = document.getElementById('dash-glucose-time');
-  if(valEl && timeEl) {
-     if(gReadings.length > 0) {
-        let last = gReadings[0];
-        valEl.textContent = last.value + ' mg/dL';
-        valEl.style.color = last.value < 70 ? 'var(--amber)' : (last.value <= 139 ? 'var(--green)' : 'var(--red)');
-        timeEl.textContent = 'Hoje às ' + last.time;
-     } else {
-        valEl.textContent = '--';
-        valEl.style.color = 'var(--text)';
-        timeEl.textContent = 'Sem medições';
-     }
-  }
+  renderDashCalendar();
+}
+
+function toggleDashCLItem(item) {
+    const ts = globalDateStr;
+    if(!clLog[ts]) clLog[ts] = {};
+    clLog[ts][item] = !clLog[ts][item];
+    persistAll();
+    renderDashboard();
+    updateHomeWidgets();
+}
+
+function addDashChecklist() {
+    const inp = document.getElementById('dash-cl-input');
+    const item = inp.value.trim();
+    if(!item) return;
+    clCustom.push(safeKey(item));
+    
+    const ts = globalDateStr;
+    if(!clLog[ts]) clLog[ts] = {};
+    clLog[ts][safeKey(item)] = true;
+
+    inp.value = '';
+    persistAll();
+    renderDashboard();
+    renderCLData();
+    updateHomeWidgets();
+}
+
+function addDashMeal() {
+    const meal = document.getElementById('dash-diet-meal').value;
+    const kcal = document.getElementById('dash-diet-kcal').value;
+    const time = document.getElementById('dash-diet-time').value;
+    if(!meal || !kcal || !time) return showToast('t-save','Preencha prato, kcal e hora!');
+    
+    if(!dLog[globalDateStr]) dLog[globalDateStr] = {goal:defaultDietGoal, items:[]};
+    if(!Array.isArray(dLog[globalDateStr].items)) dLog[globalDateStr].items = [];
+    dLog[globalDateStr].items.unshift({meal: safeKey(meal), kcal: kcal, time: time});
+    
+    document.getElementById('dash-diet-meal').value = '';
+    document.getElementById('dash-diet-kcal').value = '';
+    
+    persistAll();
+    renderDashboard();
+    renderDietData();
+    updateHomeWidgets();
+    showToast('t-save', 'Refeição Salva!');
+}
+
+function delDashMeal(i) {
+    if(!confirm('Apagar refeição?')) return;
+    dLog[globalDateStr].items.splice(i, 1);
+    persistAll();
+    renderDashboard();
+    renderDietData();
+    updateHomeWidgets();
+}
+
+function addDashGlucose() {
+    const val = document.getElementById('dash-g-val').value;
+    const tag = document.getElementById('dash-g-tag').value;
+    const time = document.getElementById('dash-g-time').value;
+    
+    if(!val || parseFloat(val) <= 0 || !time) { showToast('t-save', 'Insira valor e hora!'); return; }
+    
+    const now = new Date();
+    gReadings.unshift({
+        value: parseFloat(val),
+        meal: tag || 'Sem Tag',
+        time: time,
+        date: globalDateStr,
+        ts: now.getTime()
+    });
+    if(gReadings.length > 500) gReadings.pop();
+    
+    document.getElementById('dash-g-val').value = '';
+    persistAll();
+    updateAllData();
+    renderDashboard();
+    showToast('t-save', '✓ Medição salva!');
+}
+
+// ═══════════════════════════════════════════════════════════
+// HOME WIDGETS
+// ═══════════════════════════════════════════════════════════
+function updateHomeWidgets(){
+  const todayStr=globalDateStr;
+  const gDay=gReadings.filter(r=>r.date===todayStr||r.date===todayStr.replace(/-/g,'/'));
+  let gTir=0;if(gDay.length>0){let ir=gDay.filter(r=>r.value>=70&&r.value<=139).length;gTir=Math.round((ir/gDay.length)*100);}
+  document.getElementById('wm-val-g').textContent=gTir+'%';
+  document.getElementById('wm-fill-g').style.width=gTir+'%';
+  
+  const wDay=wLog[todayStr];let wPct=0;
+  if(wDay&&wDay.exercises&&wDay.exercises.length>0){let done=wDay.exercises.filter(ex=>ex.done).length;wPct=Math.round((done/wDay.exercises.length)*100);}
+  document.getElementById('wm-val-w').textContent=wPct+'%';
+  document.getElementById('wm-fill-w').style.width=wPct+'%';
+  
+  let clTotal=2+clCustom.length,clDone=0;
+  if(gTir>=70)clDone++;
+  if(wPct===100&&wDay&&wDay.exercises&&wDay.exercises.length>0)clDone++;
+  if(clLog[todayStr])clCustom.forEach(it=>{if(clLog[todayStr][it])clDone++;});
+  let clPct=Math.round((clDone/clTotal)*100);
+  document.getElementById('wm-val-c').textContent=clPct+'%';
+  document.getElementById('wm-fill-c').style.width=clPct+'%';
+  
+  const dDay=dLog[todayStr]||{goal:defaultDietGoal,items:[]};
+  let totalKcal= (Array.isArray(dDay.items)?dDay.items:[]).reduce((s,it)=>s+parseInt(it.kcal||0),0);
+  let dPct=Math.min(100,Math.round((totalKcal/dDay.goal)*100));
+  document.getElementById('wm-val-d').textContent=totalKcal+' / '+dDay.goal+' ('+dPct+'%)';
+  document.getElementById('wm-fill-d').style.width=dPct+'%';
+  
+  const nota=Math.round(gTir*0.40+wPct*0.25+clPct*0.20+dPct*0.15);
+  const ngEl=document.getElementById('ng-val');if(ngEl)ngEl.textContent=nota+'%';
+  
+  renderHomeChecklist(todayStr,gTir,wPct);
+  renderHomeAbsencesRanking();
+  renderScheduleGrids();
 }
 
 function renderHomeChecklist(todayStr,gTir,wPct){
@@ -1589,7 +1743,7 @@ function goTo(s){
   document.getElementById('fab-back-global').style.display=(s==='home')?'none':'flex';
   
   if(s==='dashboard'){renderDashboard();}
-  if(s==='glucose'){document.getElementById('gtime').value=pad(new Date().getHours())+pad(new Date().getMinutes()); renderGlucoseCharts();}
+  if(s==='glucose'){document.getElementById('gtime').value=pad(new Date().getHours())+':'+pad(new Date().getMinutes()); renderGlucoseCharts();}
   if(s==='calendar'){calDate=new Date();selectedCalDate=globalDateStr;renderCalendar();renderCalData(); document.getElementById('screen-calendar').classList.add('active');}
   if(s==='workout'){wCalDate=new Date();wSelectedDateStr=globalDateStr;renderWCalendar();renderWData();setTimeout(()=>{renderWeightChart();renderLoadChart();},100);}
   if(s==='checklist'){clCalDate=new Date();clSelectedDateStr=globalDateStr;renderCLCalendar();renderCLData();}
@@ -2458,7 +2612,7 @@ function renderSCalendar(){
   for(let i=1;i<=dm;i++){
     let isoDate = `${yr}-${pad(mo+1)}-${pad(i)}`; 
     let hasExam = examMap[isoDate] ? true : false;
-    let examText = hasExam ? examMap[isoDate].join('<br>') : '';
+    let examText = hasExam ? examMap[isoDate].join('<br>') : ''; // Usa <br> para múltiplas provas
     
     let onClickAction = hasExam ? `showExamTooltip('${examText}', event)` : '';
     
